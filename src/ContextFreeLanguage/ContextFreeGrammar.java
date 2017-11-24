@@ -1,5 +1,6 @@
 package ContextFreeLanguage;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,7 +16,7 @@ public class ContextFreeGrammar {
 	protected String grammar; // The input grammar entered by the user
 	private String id; // an unique ID for the CGF
 	private HashSet<String> vn;	// non terminal symbols
-	private HashSet<Character> vt;	// terminal symbols
+	private HashSet<String> vt;	// terminal symbols
 	private HashMap<String, HashSet<String>> productions; // production rules
 	private String s;	// initial S
 	private static Scanner prodScan;
@@ -27,7 +28,7 @@ public class ContextFreeGrammar {
 	public ContextFreeGrammar(String inp) {
 		this.grammar = inp;
 		vn = new HashSet<String>();
-		vt = new HashSet<Character>();
+		vt = new HashSet<String>();
 		productions = new HashMap<String, HashSet<String>>();
 	}
 	
@@ -47,16 +48,68 @@ public class ContextFreeGrammar {
 	public String toString() {
 		return this.id;
 	}
+		
+	/**
+	 * Get set of non terminal symbols (Vn)
+	 * @return Vn
+	 */
+	public Set<String> getVn() {
+		return Collections.unmodifiableSet(vn);
+	}
 	
+	/**
+	 * Get set of terminal symbols (Vt)
+	 * @return Vt
+	 */
+	public Set<String> getVt() {
+		return Collections.unmodifiableSet(vt);
+	}
+	
+	/**
+	 * Get production rules from non terminal
+	 * @param vn production rule input
+	 * @return production rules output set
+	 */
+	public Set<String> getGrammarProductions(String vn) {
+		Set<String> prod = productions.get(vn);
+		if (prod == null) {
+			prod = new HashSet<String>();
+		}
+		return Collections.unmodifiableSet(prod);
+	}
+	
+	/**
+	 * String representation of a regular grammar
+	 * @return representation of a RG
+	 */
 	public String getDefinition() {
+		String grammar = "";
+		String aux = "";
+		HashSet<String> prodList;
+		
+		for (String vN : this.productions.keySet()) {
+			prodList = this.productions.get(vN);
+			
+			for (String prod : prodList) {
+				aux += prod + " | ";
+			}
+			aux = aux.substring(0, aux.length()-2);
+			if (vN.equals(this.s)) {
+				grammar = vN + " -> " + aux + "\n" + grammar;
+			} else {
+				grammar += vN + " -> " + aux + "\n";
+			}
+			aux = "";
+		}
 		return this.grammar;
 	}
+	
 	
 	public static ContextFreeGrammar isValidCFG(String inp) {
 		ContextFreeGrammar cfg = new ContextFreeGrammar(inp);
 		// Verify invalid symbols
 		if (!isLexicallyValid(inp)) {
-			return null;
+//			return null;
 		}
 		
 		// Get productions with no blanks for every vn
@@ -82,13 +135,8 @@ public class ContextFreeGrammar {
 	
 	private static String[] getProductions(String str) {
 		String[] prod = str.split("[\\r\\n]+");	// Split by line break
-		int i = 0;
-		for (String s : prod) {
-			prod[i++] = s.replaceAll("\\s+", ""); // Remove spaces
-		}
 		return prod;
 	}
-	
 	private static ContextFreeGrammar validateProductions(String[] nt, ContextFreeGrammar cfg) {
 		Scanner vnScan = null;
 		String vn = "";
@@ -109,32 +157,27 @@ public class ContextFreeGrammar {
 					pr = new HashSet<String>();
 				}
 				
+				vn = vn.replaceAll("\\s+", "");
 				if (vn.length() > 1) { // if vn = AA || vn = A1A
-					if (!vn.substring(1).matches("^[0-9]+")) {
-						System.out.println("wr");
-					}
-				}
-				
-				// if first symbol of vn is terminal
-				if (Character.isLowerCase(vn.charAt(0))
-						|| Character.isDigit(vn.charAt(0))) {
-					cfg.vn.clear();
-					vnScan.close();
-					return null;
-				}
-				
-				for (int j = 0; j < vn.length(); j++) {
-					if (!Character.isLetterOrDigit(vn.charAt(j))
-							|| Character.isLowerCase(vn.charAt(j))) {
+					if (!vn.substring(1).matches("^[0-9\\s+]+")) {
 						cfg.vn.clear();
 						vnScan.close();
 						return null;
 					}
 				}
+				
+				// if first symbol of vn is terminal
+				if (!Character.isUpperCase(vn.charAt(0))) {
+					cfg.vn.clear();
+					vnScan.close();
+					return null;
+				}
+				
 				cfg.vn.add(vn);
 				if (!isSDefined) {
 					cfg.s = vn;
 					isSDefined = true;
+					
 				}
 				if (!validateProduction(vn, prod, pr, cfg)) {
 					cfg.vn.clear();
@@ -151,37 +194,44 @@ public class ContextFreeGrammar {
 			HashSet<String> prodList, ContextFreeGrammar cfg) {
 		// Iterate every production for every vN
 		String prod = productions.substring(productions.indexOf("->")+2);
-		int prodLength = 0;
-		prodScan = new Scanner(prod);
-		prodScan.useDelimiter("[|]");
-		if (prod.length() < 1) {
+		if (prod.replaceAll("\\s+", "").length() < 1) {
 			cfg.vn.clear();
 			prodScan.close();
 			return false;
 		}
+		prodScan = new Scanner(prod);
+		prodScan.useDelimiter("[|]");
 		
 		while (prodScan.hasNext()) {
 			prod = prodScan.next();
-			prodLength = prod.length();
-			if (prodLength < 1) { // |prod| = 0
+			if (prod.replaceAll("\\s+", "").length() < 1) { // |prod| = 0
 				cfg.vn.clear();
 				prodScan.close();
 				return false;
 			}
-			for (int i = 0; i < prodLength; i++) {
-				char c = prod.charAt(i);
-				if (!Character.isLetterOrDigit(c)
-						&& c != '&') { // if it's not a terminal
-					cfg.vn.clear();
-					prodScan.close();
-					return false;
-				} else if (Character.isUpperCase(c)) { // get vns
-					cfg.vn.add(Character.toString(c));
+			String[] symbols = prod.split("[\\s\\r]+"); // + E T
+			for (String symb : symbols) {
+				if(symb.isEmpty()) {
+					continue;
 				}
-				if (c == '&' || Character.isLetterOrDigit(c)) { // get vts
-					if (Character.isLetter(c) && Character.isLowerCase(c) || c == '&') {
-						cfg.vt.add(c);
+				if (Character.isUpperCase(symb.charAt(0))) {
+					for (int i = 1; i < symb.length(); i++) {
+						if (!Character.isDigit(symb.charAt(i))) { // E1E
+							cfg.vn.clear();
+							prodScan.close();
+							return false;
+						}
 					}
+					cfg.vn.add(symb);
+				} else {
+					for (int i = 1; i < symb.length(); i++) {
+						if (Character.isUpperCase(symb.charAt(i))) {
+							cfg.vn.clear();
+							prodScan.close();
+							return false;
+						}
+					}
+					cfg.vt.add(symb);
 				}
 			}
 			prodList.add(prod);
@@ -190,8 +240,6 @@ public class ContextFreeGrammar {
 		prodScan.close();
 		return true;
 	}
-	
-	
 	
 	
 }

@@ -14,6 +14,10 @@ import ContextFreeLanguage.ContextFreeGrammar;
 class FirstNTTest {
 	private ContextFreeGrammar grammar[];
 
+	/**
+	 * Set up grammars
+	 * @throws Exception
+	 */
 	@BeforeEach
 	void setUp() throws Exception {
 		grammar = new ContextFreeGrammar[11];
@@ -75,7 +79,9 @@ class FirstNTTest {
 				"D -> a | &");
 	}
 	
-
+	/**
+	 * Test firstNT set for G0
+	 */
 	@Test
 	void firstNTG0Test() {
 		CFGOperator op = new CFGOperator(grammar[0]);
@@ -87,6 +93,9 @@ class FirstNTTest {
 		assertEquals(expected, op.getFirstNT().get("C"));
 	}
 	
+	/**
+	 * Test firstNT set for G1
+	 */
 	@Test
 	void firstNTG1Test() {
 		CFGOperator op = new CFGOperator(grammar[1]);
@@ -102,6 +111,10 @@ class FirstNTTest {
 		expected.add("C");
 		assertEquals(expected, op.getFirstNT().get("S"));
 	}
+	
+	/**
+	 * Test firstNT set for G2
+	 */
 	@Test
 	void firstNTG2Test() {
 		CFGOperator op = new CFGOperator(grammar[2]);
@@ -116,6 +129,9 @@ class FirstNTTest {
 		assertEquals(expected, op.getFirstNT().get("S"));
 	}
 	
+	/**
+	 * Test firstNT set for G3
+	 */
 	@Test
 	void firstNTG3Test() {
 		CFGOperator op = new CFGOperator(grammar[3]);
@@ -130,7 +146,9 @@ class FirstNTTest {
 		assertEquals(expected, op.getFirstNT().get("S"));
 	}
 	
-	
+	/**
+	 * Test firstNT set for G4
+	 */
 	@Test
 	void firstNTG4Test() {
 		CFGOperator op = new CFGOperator(grammar[4]);
@@ -139,7 +157,9 @@ class FirstNTTest {
 		assertEquals(expected, op.getFirstNT().get("S"));
 	}
 	
-	
+	/**
+	 * Test firstNT set for G5
+	 */
 	@Test
 	void firstNTG5Test() {
 		CFGOperator op = new CFGOperator(grammar[5]);
@@ -158,6 +178,9 @@ class FirstNTTest {
 		assertEquals(expected, op.getFirstNT().get("S"));
 	}
 	
+	/**
+	 * Test firstNT set for G6
+	 */
 	@Test
 	void firstNTG6Test() {
 		CFGOperator op = new CFGOperator(grammar[6]);
@@ -169,6 +192,9 @@ class FirstNTTest {
 		assertEquals(expected, op.getFirstNT().get("B"));
 	}
 	
+	/**
+	 * Test firstNT set for G7
+	 */
 	@Test
 	void firstNTG7Test() {
 		CFGOperator op = new CFGOperator(grammar[7]);
@@ -184,6 +210,9 @@ class FirstNTTest {
 		assertEquals(expected, op.getFirstNT().get("T"));
 	}
 	
+	/**
+	 * Test firstNT set for G8
+	 */
 	@Test
 	void firstNTG8Test() {
 		CFGOperator op = new CFGOperator(grammar[8]);
@@ -223,6 +252,9 @@ class FirstNTTest {
 		assertEquals(expected, op.getFirstNT().get("M"));
 	}
 	
+	/**
+	 * Test firstNT set for G9
+	 */
 	@Test
 	void firstNTG9Test() {
 		CFGOperator op = new CFGOperator(grammar[9]);
@@ -234,6 +266,9 @@ class FirstNTTest {
 		assertEquals(expected, op.getFirstNT().get("X"));
 	}
 	
+	/**
+	 * Test firstNT set for G10
+	 */
 	@Test
 	void firstNTG10Test() {
 		CFGOperator op = new CFGOperator(grammar[10]);

@@ -1,6 +1,5 @@
 package ContextFreeLanguage;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -10,6 +9,7 @@ import java.util.Set;
 /**
  * Representation of a Context Free Language
  */
+
 public class ContextFreeGrammar {
 
 	protected String grammar; // The input grammar entered by the user
@@ -31,6 +31,11 @@ public class ContextFreeGrammar {
 		productions = new HashMap<String, HashSet<String>>();
 	}
 	
+	/**
+	 * Constructor
+	 * Creates a new grammar based on the parameter
+	 * @param g the grammar to have data copied from
+	 */
 	public ContextFreeGrammar(ContextFreeGrammar g) {
 		this.vn = g.vn;
 		this.vt = g.vt;
@@ -39,33 +44,70 @@ public class ContextFreeGrammar {
 		this.grammar = g.grammar;
 	}
 	
+	/**
+	 * Default constructor
+	 */
 	public ContextFreeGrammar() {
 		vn = new HashSet<String>();
 		vt = new HashSet<String>();
 		productions = new HashMap<String, HashSet<String>>();
 	}
 	
+	/**
+	 * Set all the productions of all non terminals
+	 * @param p the map of non terminals and productions
+	 */
 	public void setProductions(HashMap<String, HashSet<String>> p) {
 		this.productions = p;
 	}
 	
+	/**
+	 * Remove all productions of a non terminal
+	 * @param nt the non terminal
+	 */
+	public void removeProductions(String nt) {
+		if (this.vn.contains(nt) && this.productions.containsKey(nt)) {
+			this.productions.remove(nt);
+			this.vn.remove(nt);
+		}
+	}
+	
+	/**
+	 * Add a vt to the grammar
+	 * @param t
+	 */
 	public void addVt(String t) {
 		this.vt.add(t);
 	}
 	
-
+	/**
+	 * Get the id of the grammar
+	 * @return the grammar id
+	 */
 	public String getId() {
 		return this.id;
 	}
 	
+	/**
+	 * Set the id of the grammar
+	 * @param id the id to be set
+	 */
 	public void setId(String id) {
 		this.id = id;
 	}
 	
+	/**
+	 * Get the initial symbol
+	 * @return the initial symbol
+	 */
 	public String getInitialSymbol() {
 		return this.s;
 	}
 	
+	/**
+	 * Set the initial symbol of the grammar
+	 * @param s the initial symbol
+	 */
 	public void setInitialSymbol(String s) {
 		this.s = s;
 	}
@@ -74,21 +116,38 @@ public class ContextFreeGrammar {
 		return this.id;
 	}
 		
+	/**
+	 * Add a non terminal to the grammar
+	 * @param nt the non terminal
+	 */
 	public void addVn(String nt) {
 		if (!this.vn.contains(nt)) {
 			this.vn.add(nt);
 			this.productions.put(nt, new HashSet<String>());
 		}
-		
 	}
 	
+	/**
+	 * Remove a production of a non terminal
+	 * @param nt the non terminal
+	 * @param prod the production
+	 */
 	public void removeProduction(String nt, String prod) {
 		HashSet<String> pSet = this.productions.get(nt);
 		pSet.remove(prod);
 		this.productions.put(nt, pSet);
 	}
 	
+	/**
+	 * Add a production to a non terminal
+	 * @param nt the non terminal
+	 * @param prod the production
+	 */
 	public void addProduction(String nt, String prod) {
+		if (!this.vn.contains(nt)) {
+			this.vn.add(nt);
+			this.productions.put(nt, new HashSet<String>());
+		}
 		HashSet<String> p = this.productions.get(nt);
 		p.add(prod);
 		this.productions.put(nt, p);
@@ -151,6 +210,11 @@ public class ContextFreeGrammar {
 	}
 	
 	
+	/**
+	 * Verify if a given input grammar is valid for a cfg
+	 * @param inp the input grammar
+	 * @return a new grammar if valid, null if invalid
+	 */
 	public static ContextFreeGrammar isValidCFG(String inp) {
 		ContextFreeGrammar cfg = new ContextFreeGrammar(inp);
 		// Verify invalid symbols
@@ -171,6 +235,11 @@ public class ContextFreeGrammar {
 		return cfg;
 	}
 	
+	/**
+	 * Verify if the symbols are lexically valid
+	 * @param input the list of symbols
+	 * @return true if they are valid
+	 */
 	public static boolean isLexicallyValid(String input) {
 		String formatted =  input.replaceAll("\\s+", ""); // Remove white spaces
 		if (!formatted.matches("^[a-zA-Z0-9\\->|&]+")) { // Verify invalid symbols
@@ -179,10 +248,22 @@ public class ContextFreeGrammar {
 		return true;
 	}
 	
+	/**
+	 * Break a string production into an array
+ 	 * @param str the production string
+	 * @return the array with a symbol per position
+	 */
 	private static String[] getProductions(String str) {
 		String[] prod = str.split("[\\r\\n]+");	// Split by line break
 		return prod;
 	}
+	
+	/**
+	 * Validate the productions for every non terminal vn
+	 * @param nt the list of non terminals
+	 * @param cfg the grammar
+	 * @return a new grammar if the productions are valid, null if invalid
+	 */
 	private static ContextFreeGrammar validateProductions(String[] nt, ContextFreeGrammar cfg) {
 		Scanner vnScan = null;
 		String vn = "";
@@ -236,6 +317,14 @@ public class ContextFreeGrammar {
 		return cfg;
 	}
 
+	/**
+	 * Verify if all the productions are valid for a CFG
+	 * @param vn the non terminal the productions belong to
+	 * @param productions the productions
+	 * @param prodList the list of productions
+	 * @param cfg the grammar
+	 * @return true if they are valid
+	 */
 	private static boolean validateProduction(String vn, String productions,
 			HashSet<String> prodList, ContextFreeGrammar cfg) {
 		// Iterate every production for every vN
@@ -287,16 +376,21 @@ public class ContextFreeGrammar {
 		return true;
 	}
 
-	public void addProduction(String s2, Set<String> hashSet) {
+	/**
+	 * Add a set of productions to a vn
+	 * @param nt the vn to add the productions to
+	 * @param hashSet the set of productions
+	 */
+	public void addProduction(String nt, Set<String> hashSet) {
 		HashSet<String> p;
-		if (this.vn.contains(s2)) {
-			p = productions.get(s2);
+		if (this.vn.contains(nt)) {
+			p = productions.get(nt);
 		} else {
-			addVn(s2);
+			addVn(nt);
 			p = new HashSet<>();
 		}
 		p.addAll(hashSet);
-		productions.put(s2, p);
+		productions.put(nt, p);
 	}
 
 	

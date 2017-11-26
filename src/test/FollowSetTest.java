@@ -16,6 +16,10 @@ class FollowSetTest {
 	private ContextFreeGrammar grammar[];
 
 
+	/**
+	 * Set up grammars
+	 * @throws Exception
+	 */
 	@BeforeEach
 	void setUp() throws Exception {
 		grammar = new ContextFreeGrammar[12];
@@ -84,6 +88,9 @@ class FollowSetTest {
 				"D -> a | &");
 	}
 	
+	/**
+	 * Test follow set for G0
+	 */
 	@Test
 	void testFollowSetG0() {
 		CFGOperator op = new CFGOperator(grammar[0]);
@@ -106,6 +113,9 @@ class FollowSetTest {
 		expectedFollow.clear();
 	}
 	
+	/**
+	 * Test follow set for G1
+	 */
 	@Test
 	void testFollowSetG1() {
 		CFGOperator op = new CFGOperator(grammar[1]);
@@ -147,6 +157,9 @@ class FollowSetTest {
 		expectedFollow.clear();
 	}
 	
+	/**
+	 * Test follow set for G2
+	 */
 	@Test
 	void testFollowSetG2() {
 		CFGOperator op = new CFGOperator(grammar[2]);
@@ -162,6 +175,9 @@ class FollowSetTest {
 		assertTrue(followB.equals(expectedFollow));
 	}
 	
+	/**
+	 * Test follow set for G3
+	 */
 	@Test
 	void testFollowSetG3() {
 		CFGOperator op = new CFGOperator(grammar[3]);
@@ -184,6 +200,9 @@ class FollowSetTest {
 		expectedFollow.clear();
 	}
 
+	/**
+	 * Test follow set for G4
+	 */
 	@Test
 	void testFollowSetG4() {
 		CFGOperator op = new CFGOperator(grammar[4]);
@@ -197,6 +216,9 @@ class FollowSetTest {
 		expectedFollow.clear();
 	}
 	
+	/**
+	 * Test follow set for G5
+	 */
 	@Test
 	void testFollowSetG5() {
 		CFGOperator op = new CFGOperator(grammar[5]);
@@ -229,10 +251,12 @@ class FollowSetTest {
 		expectedFollow.clear();
 	}
 	
+	/**
+	 * Test follow set for G6
+	 */
 	@Test
 	void testFollowSetG6() {
 		CFGOperator op = new CFGOperator(grammar[6]);
-		HashMap<String, Set<String>> follow = op.getFollow();
 		
 		Set<String> followS = op.getFollow("S");
 		Set<String> followA = op.getFollow("A");
@@ -261,6 +285,9 @@ class FollowSetTest {
 		expectedFollow.clear();
 	}
 
+	/**
+	 * Test follow set for G7
+	 */
 	@Test
 	void testFollowSetG7() {
 		CFGOperator op = new CFGOperator(grammar[7]);
@@ -288,6 +315,9 @@ class FollowSetTest {
 		expectedFollow.clear();
 	}
 	
+	/**
+	 * Test follow set for G8
+	 */
 	@Test
 	void testFollowSetG8() {
 		CFGOperator op = new CFGOperator(grammar[8]);
@@ -336,6 +366,9 @@ class FollowSetTest {
 		expectedFollow.clear();
 	}
 	
+	/**
+	 * Test follow set for G9
+	 */
 	@Test
 	void testFollowSetG9() {
 		CFGOperator op = new CFGOperator(grammar[9]);
@@ -378,10 +411,12 @@ class FollowSetTest {
 		expectedFollow.clear();
 	}
 	
+	/**
+	 * Test follow set for G10
+	 */
 	@Test
 	void testFollowSetG10() {
 		CFGOperator op = new CFGOperator(grammar[10]);
-		HashMap<String, Set<String>> follow = op.getFollow();
 		
 		Set<String> followX = op.getFollow("X");
 		Set<String> followY = op.getFollow("Y");
@@ -400,6 +435,9 @@ class FollowSetTest {
 		expectedFollow.clear();
 	}
 	
+	/**
+	 * Test follow set for G11
+	 */
 	@Test
 	void testFirstSetG11() {
 		CFGOperator op = new CFGOperator(grammar[11]);

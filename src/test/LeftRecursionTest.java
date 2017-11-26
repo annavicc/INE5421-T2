@@ -11,6 +11,10 @@ import ContextFreeLanguage.ContextFreeGrammar;
 class LeftRecursionTest {
 private ContextFreeGrammar grammar[];
 	
+	/**
+	 * Set up grammars
+	 * @throws Exception
+	 */
 	@BeforeEach
 	void setUp() throws Exception {
 		grammar = new ContextFreeGrammar[13];
@@ -85,6 +89,9 @@ private ContextFreeGrammar grammar[];
 				);
 	}
 
+	/**
+	 * Verify left recursion for the grammars
+	 */
 	@Test
 	void hasLeftRecursiontest() {
 		CFGOperator op = new CFGOperator(grammar[0]);
@@ -113,6 +120,23 @@ private ContextFreeGrammar grammar[];
 		assertFalse(op.hasLeftRecursion());
 		op = new CFGOperator(grammar[12]);
 		assertFalse(op.hasLeftRecursion());
+	}
+	
+	/**
+	 * Test elimination of left recursion
+	 */
+	@Test
+	void eliminateRecursionTest() {
+		ContextFreeGrammar g = ContextFreeGrammar.isValidCFG(
+				"S -> B b | C d\n" + 
+				"B -> C a B | &\n" + 
+				"C -> c C | & | B\n");
+		CFGOperator op = new CFGOperator(g);
+		assertEquals("S -> C a B  b | b |  C d \n" + 
+				"B ->  C a B  |  & \n" + 
+				"C ->  c C C1 | C1 \n" + 
+				"C1 -> & | a B C1 \n" + 
+				"", op.eliminateLeftRecursion().get(2).getDefinition());
 	}
 
 }

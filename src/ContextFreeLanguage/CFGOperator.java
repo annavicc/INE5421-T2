@@ -487,6 +487,9 @@ public class CFGOperator {
 	private ArrayList<String> getProdList(Set<String> p) {
 		ArrayList<String> l = new ArrayList<>();
 		for (String s : p) {
+			if (s.isEmpty()) {
+				continue;
+			}
 			l.add(s);
 		}
 		return l;
@@ -510,9 +513,9 @@ public class CFGOperator {
 		for(String nonTerminal : newG.getVn()) {
 			prod = newG.getGrammarProductions(nonTerminal);
 			ArrayList<String> prods = getProdList(prod);
-			for(int i = 0; i < prods.size(); i++){
+			for(int i = 0; i < prods.size(); i++) {
 				nfProd1 = breakSententialForm(prods.get(i));
-				for(int j = i+1; j<prods.size(); j++){
+				for(int j = i+1; j < prods.size(); j++) {
 					nfProd2 = breakSententialForm(prods.get(j));
 					if(nfProd1.get(0).equals(nfProd2.get(0))) { // Direct
 						newG.removeProduction(nonTerminal, prods.get(i));
@@ -556,7 +559,6 @@ public class CFGOperator {
 					}
 				}
 		}
-		System.out.println(newG.getDefinition());
 		return newG;
 	}
 	
@@ -670,14 +672,199 @@ public class CFGOperator {
 		return prod;
 	}
 	
-	// TODO transform G in proper
+	/**
+	 * Eliminate left recursion of the grammar
+	 * @return all the resulting grammars from every step of the recursion elimination process
+	 */
 	public ArrayList<ContextFreeGrammar> eliminateLeftRecursion() {
+		// TODO transform G in proper
 		ArrayList<ContextFreeGrammar> results = new ArrayList<>();
+		ContextFreeGrammar newG = grammar; // new grammar
+		ArrayList<HashMap<String, HashSet<String>>> newProd;
+		ArrayList<String> numberedVn = new ArrayList<>();
+		for (String nt : newG.getVn()) { // ordered vn
+			numberedVn.add(nt);
+		}
+		
 		if (!hasLeftRecursion()) {
 			return results;
 		}
-		return results;
 		
+		for (int i = 0; i < numberedVn.size(); i++) { // for every Ai
+			// Indirect Left Recursion
+			for (int j = 0; j <= i-1; j++) { // For every Aj
+				ArrayList<String> productions = getProdList(newG.getGrammarProductions(numberedVn.get(i)));
+				for (String aiProd : productions) { // Ai -> ... 
+					String firstSymbolAi = breakSententialForm(aiProd).get(0); // first symbol of prod in Ai
+					if(vt.contains(firstSymbolAi)) { // terminal
+						continue;
+					}
+					if  (firstSymbolAi.equals(numberedVn.get(j))) { // Ai -> Ajalfa
+						newProd = (replaceIndirectRecursionProduction(numberedVn.get(i), numberedVn.get(j)));
+						newG.removeProduction(numberedVn.get(i), aiProd);
+						for (HashMap<String, HashSet<String>>  map : newProd) {
+							for (String key: map.keySet()) {
+								newG.addVn(key);
+								for (String pp : map.get(key)){ 
+									if (pp.equals("&")) { // if an epsilon was added, add & to the grammar vt set
+										newG.addVt("&");
+									}
+									Set<String> s = newG.getGrammarProductions(key);
+									if (!pp.isEmpty()) {
+										s.add(pp);
+									}
+									newG.addProduction(key, s);
+								}
+							}
+						}
+					}
+				}
+			}
+			// Eliminate direct recursion of Ai productions
+			if (hasDirectRecursion(numberedVn.get(i))) {
+				newProd = replaceDirectRecursionProduction(numberedVn.get(i));
+				newG.removeProductions(numberedVn.get(i)); // remove productions with recursion
+				for (HashMap<String, HashSet<String>>  map : newProd) {
+					for (String key: map.keySet()) {
+						newG.addVn(key);
+						for (String pp : map.get(key)){ 
+							if (pp.equals("&")) { // if an epsilon was added, add & to the grammar vt set
+								newG.addVt("&");
+							}
+							Set<String> s = newG.getGrammarProductions(key);
+							if (!pp.isEmpty()) {
+								s.add(pp);
+							}
+							newG.addProduction(key, s);
+						}
+					}
+				}
+			}
+			
+			results.add(newG);
+		}
+		return results;
+	}
+	
+	/**
+	 * Verify if a given non terminal contains direct left recursion
+	 * @param ai the non terminal to verify
+	 * @return true if there is direct recursion
+	 */
+	public boolean hasDirectRecursion(String ai) {
+		for (String prod : grammar.getGrammarProductions(ai)) {
+			ArrayList<String> aiProdSymbols = breakSententialForm(prod);
+			String firstSymbolAi = aiProdSymbols.get(0);
+			if (firstSymbolAi.equals(ai)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Replace Direct recursion
+	 * A -> Aalfa1 | Aalfa2 | beta1 | ...
+	 * A -> beta1A1 | ...
+	 * A1 -> alfa1A1 | ... | &
+	 * @param ai the non terminal to verify the productions
+	 * @return the new production rules for ai
+	 */
+	ArrayList<HashMap<String, HashSet<String>>> replaceDirectRecursionProduction(String ai) {
+		ArrayList<HashMap<String, HashSet<String>>> ar = new ArrayList<HashMap<String, HashSet<String>>  >();
+		HashMap<String, HashSet<String>> newProd = new HashMap<String, HashSet<String>>();
+		ArrayList<String> betaProductions = new ArrayList<String>();
+		ArrayList<String> alfaProductions = new ArrayList<String>();
+		HashSet<String> set;
+		String newVn = ai + "" + 1;
+		newProd.put(ai, new HashSet<>());
+		newProd.put(newVn, new HashSet<>());
+		
+		for (String prod : grammar.getGrammarProductions(ai)) {
+			ArrayList<String> aiProdSymbols = breakSententialForm(prod);
+			String firstSymbolAi = aiProdSymbols.get(0);
+			if (!firstSymbolAi.equals(ai)) {
+				betaProductions.add(prod); // beta production
+				continue;
+			}
+			// recursive symbol
+			// Get the alfa part
+			String alfa = "";
+			for (int i = 1; i < aiProdSymbols.size(); i++) {
+				if(!aiProdSymbols.get(i).isEmpty()) {
+					alfa += aiProdSymbols.get(i) + " ";
+				}
+			}
+			alfa = alfa.substring(0, alfa.length()-1);
+			alfaProductions.add(alfa);
+		}
+		
+		for (String s: betaProductions) {
+			if (s.equals(" & ")) {
+				set = newProd.get(ai);
+				set.add(newVn);
+				newProd.put(ai, set);
+				continue;
+			}
+			set = newProd.get(ai);
+			set.add(s + newVn);
+			newProd.put(ai, set);
+		}
+		for (String s : alfaProductions) {
+			set = newProd.get(newVn);
+			set.add(s + " " + newVn);
+			newProd.put(newVn, set);
+		}
+		set = newProd.get(newVn);
+		set.add("&");
+		newProd.put(newVn, set);
+		ar.add(newProd);
+		return ar ;
+	}
+	
+	/**
+	 * Replace the indirect recursion for the Ai and Aj non terminals
+	 * Ai -> Ajgama
+	 * Aj -> delta1gama | delta2gama |...
+	 * delta = right side of Aj productions (Aj -> delta1 | delta2)
+	 * @param ai the terminal with indirect recursion productions
+	 * @param aj the terminal with delta productions
+	 * @return the new production rules for Ai
+	 */
+	ArrayList<HashMap<String, HashSet<String>>> replaceIndirectRecursionProduction(String ai, String aj) {
+		HashMap<String, HashSet<String>> prod = new HashMap<String, HashSet<String>>();
+		prod.put(ai, new HashSet<String>());
+		ArrayList<String> aiProd = getProdList(grammar.getGrammarProductions(ai));
+		Set<String> ajProd = grammar.getGrammarProductions(aj);
+
+		for (String aiP : aiProd) {
+			aiP = aiP.substring(1);
+			ArrayList<String> newAiProd = breakSententialForm(aiP);
+			if (!newAiProd.get(0).equals(aj)) {
+				continue;
+			} else {
+				for (String ajP : ajProd) {
+					ajP = ajP.substring(1);
+					newAiProd.remove(0);
+					if (!ajP.equals("&")) {
+						newAiProd.add(0, ajP);
+					}
+					HashSet<String> p = prod.get(ai);
+					String newProd = "";
+					for (String pr : newAiProd) {
+						newProd += pr + " ";
+					}
+					if (newProd.length() > 0) {
+						newProd = newProd.substring(0, newProd.length()-1);
+					}
+					p.add(newProd);
+					prod.put(ai, p);
+				}
+			}
+		}		
+		ArrayList<HashMap<String, HashSet<String>>> ar = new ArrayList<HashMap<String, HashSet<String>>  >();
+		ar.add(prod);
+		return ar;
 	}
 	
 }

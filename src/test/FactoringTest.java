@@ -2,6 +2,8 @@ package test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +13,10 @@ import ContextFreeLanguage.ContextFreeGrammar;
 class FactoringTest {
 	private ContextFreeGrammar grammar[];
 	
+	/**
+	 * Initializes grammmars
+	 * @throws Exception
+	 */
 	@BeforeEach
 	void setUp() throws Exception {
 		grammar = new ContextFreeGrammar[13];
@@ -85,7 +91,10 @@ class FactoringTest {
 				);
 	}
 
-//	@Test
+	/**
+	 * Test if the grammar is factored
+	 */
+	@Test
 	void isFactoredtest() {
 		CFGOperator op = new CFGOperator(grammar[0]);
 		assertFalse(op.isFactored());
@@ -115,15 +124,25 @@ class FactoringTest {
 		assertFalse(op.isFactored());
 	}
 	
+	/**
+	 * Test the factoring process of a non factored grammar
+	 */
 	@Test
-	void testFactor() {
+	void testFactorG0() {
 		ContextFreeGrammar g = ContextFreeGrammar.isValidCFG(
 				"S -> B y z C | C y z B C\n" + 
 				"B -> b | c d\n" + 
 				"C -> e g | e f | c\n");
 		g.setId("G1");
 		CFGOperator op = new CFGOperator(g);
-		op.factorGrammar(2);
+		ArrayList<ContextFreeGrammar> results = new ArrayList<>();
+		results = op.factorGrammar(3);
+		assertEquals("S -> c S1 | e S1 |  b  y z C  \n" + 
+				"B ->  c d |  b  \n" + 
+				"C ->  c | e C1 \n" + 
+				"C1 -> f | g \n" + 
+				"S1 -> f y z B C | d y z C | y z B C | g y z B C \n" + 
+				"" , results.get(results.size()-1).getDefinition());
 	}
-
+	
 }

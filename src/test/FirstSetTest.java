@@ -13,6 +13,10 @@ import ContextFreeLanguage.ContextFreeGrammar;
 class FirstSetTest {
 	private ContextFreeGrammar grammar[];
 
+	/**
+	 * Set up grammars
+	 * @throws Exception
+	 */
 	@BeforeEach
 	void setUp() throws Exception {
 		grammar = new ContextFreeGrammar[12];
@@ -81,6 +85,9 @@ class FirstSetTest {
 				"D -> a | &");
 	}
 	
+	/**
+	 * Test first set for G0
+	 */
 	@Test
 	void testFirstSetG0() {
 		CFGOperator op = new CFGOperator(grammar[0]);
@@ -103,6 +110,9 @@ class FirstSetTest {
 		expectedFirst.clear();
 	}
 	
+	/**
+	 * Test first set for G1
+	 */
 	@Test
 	void testFirstSetG1() {
 		CFGOperator op = new CFGOperator(grammar[1]);
@@ -145,6 +155,9 @@ class FirstSetTest {
 		expectedFirst.clear();
 	}
 	
+	/**
+	 * Test first set for G2
+	 */
 	@Test
 	void testFirstSetG2() {
 		CFGOperator op = new CFGOperator(grammar[2]);
@@ -160,6 +173,9 @@ class FirstSetTest {
 		expectedFirst.clear();
 	}
 
+	/**
+	 * Test first set for G3
+	 */
 	@Test
 	void testFirstSetG3() {
 		CFGOperator op = new CFGOperator(grammar[3]);
@@ -186,6 +202,9 @@ class FirstSetTest {
 		expectedFirst.clear();
 	}
 
+	/**
+	 * Test first set for G4
+	 */
 	@Test
 	void testFirstSetG4() {
 		CFGOperator op = new CFGOperator(grammar[4]);
@@ -198,6 +217,9 @@ class FirstSetTest {
 		expectedFirst.clear();
 	}
 	
+	/**
+	 * Test first set for G5
+	 */
 	@Test
 	void testFirstSetG5() {
 		CFGOperator op = new CFGOperator(grammar[5]);
@@ -234,6 +256,9 @@ class FirstSetTest {
 		expectedFirst.clear();
 	}
 	
+	/**
+	 * Test first set for G6
+	 */
 	@Test
 	void testFirstSetG6() {
 		CFGOperator op = new CFGOperator(grammar[6]);
@@ -257,6 +282,9 @@ class FirstSetTest {
 		expectedFirst.clear();
 	}
 	
+	/**
+	 * Test first set for G7
+	 */
 	@Test
 	void testFirstSetG7() {
 		CFGOperator op = new CFGOperator(grammar[7]);
@@ -293,6 +321,9 @@ class FirstSetTest {
 		expectedFirst.clear();
 	}
 	
+	/**
+	 * Test first set for G8
+	 */
 	@Test
 	void testFirstSetG8() {
 		CFGOperator op = new CFGOperator(grammar[8]);
@@ -334,6 +365,9 @@ class FirstSetTest {
 		expectedFirst.clear();
 	}
 	
+	/**
+	 * Test first set for G9
+	 */
 	@Test
 	void testFirstSetG9() {
 		CFGOperator op = new CFGOperator(grammar[9]);
@@ -371,6 +405,9 @@ class FirstSetTest {
 		expectedFirst.clear();
 	}
 	
+	/**
+	 * Test first set for G10
+	 */
 	@Test
 	void testFirstSetG10() {
 		CFGOperator op = new CFGOperator(grammar[10]);
@@ -395,6 +432,9 @@ class FirstSetTest {
 		expectedFirst.clear();
 	}	
 	
+	/**
+	 * Test first set for G11
+	 */
 	@Test
 	void testFirstSetG11() {
 		CFGOperator op = new CFGOperator(grammar[11]);

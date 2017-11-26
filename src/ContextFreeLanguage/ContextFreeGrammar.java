@@ -1,6 +1,5 @@
 package ContextFreeLanguage;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +31,28 @@ public class ContextFreeGrammar {
 		productions = new HashMap<String, HashSet<String>>();
 	}
 	
+	public ContextFreeGrammar(ContextFreeGrammar g) {
+		this.vn = g.vn;
+		this.vt = g.vt;
+		this.productions = g.productions;
+		this.s = g.s;
+		this.grammar = g.grammar;
+	}
+	
+	public ContextFreeGrammar() {
+		vn = new HashSet<String>();
+		vt = new HashSet<String>();
+		productions = new HashMap<String, HashSet<String>>();
+	}
+	
+	public void setProductions(HashMap<String, HashSet<String>> p) {
+		this.productions = p;
+	}
+	
+	public void addVt(String t) {
+		this.vt.add(t);
+	}
+	
 
 	public String getId() {
 		return this.id;
@@ -45,16 +66,40 @@ public class ContextFreeGrammar {
 		return this.s;
 	}
 	
+	public void setInitialSymbol(String s) {
+		this.s = s;
+	}
+	
 	public String toString() {
 		return this.id;
 	}
 		
+	public void addVn(String nt) {
+		if (!this.vn.contains(nt)) {
+			this.vn.add(nt);
+			this.productions.put(nt, new HashSet<String>());
+		}
+		
+	}
+	
+	public void removeProduction(String nt, String prod) {
+		HashSet<String> pSet = this.productions.get(nt);
+		pSet.remove(prod);
+		this.productions.put(nt, pSet);
+	}
+	
+	public void addProduction(String nt, String prod) {
+		HashSet<String> p = this.productions.get(nt);
+		p.add(prod);
+		this.productions.put(nt, p);
+	}
+	
 	/**
 	 * Get set of non terminal symbols (Vn)
 	 * @return Vn
 	 */
 	public Set<String> getVn() {
-		return Collections.unmodifiableSet(vn);
+		return vn;
 	}
 	
 	/**
@@ -62,7 +107,7 @@ public class ContextFreeGrammar {
 	 * @return Vt
 	 */
 	public Set<String> getVt() {
-		return Collections.unmodifiableSet(vt);
+		return vt;
 	}
 	
 	/**
@@ -75,7 +120,7 @@ public class ContextFreeGrammar {
 		if (prod == null) {
 			prod = new HashSet<String>();
 		}
-		return Collections.unmodifiableSet(prod);
+		return prod;
 	}
 	
 	/**
@@ -101,7 +146,8 @@ public class ContextFreeGrammar {
 			}
 			aux = "";
 		}
-		return this.grammar;
+		this.grammar = grammar;
+		return grammar;
 	}
 	
 	
@@ -240,6 +286,19 @@ public class ContextFreeGrammar {
 		prodScan.close();
 		return true;
 	}
+
+	public void addProduction(String s2, Set<String> hashSet) {
+		HashSet<String> p;
+		if (this.vn.contains(s2)) {
+			p = productions.get(s2);
+		} else {
+			addVn(s2);
+			p = new HashSet<>();
+		}
+		p.addAll(hashSet);
+		productions.put(s2, p);
+	}
+
 	
 	
 }

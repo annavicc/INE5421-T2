@@ -74,10 +74,12 @@ class FirstNTTest {
 				"C -> &\n" + 
 				"D -> a | &");
 	}
+	
 
 	@Test
 	void firstNTG0Test() {
 		CFGOperator op = new CFGOperator(grammar[0]);
+		
 		Set<String> expected = new HashSet<String>();
 		
 		assertEquals(expected, op.getFirstNT().get("S"));

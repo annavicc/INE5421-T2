@@ -85,7 +85,7 @@ class FactoringTest {
 				);
 	}
 
-	@Test
+//	@Test
 	void isFactoredtest() {
 		CFGOperator op = new CFGOperator(grammar[0]);
 		assertFalse(op.isFactored());
@@ -113,6 +113,17 @@ class FactoringTest {
 		assertFalse(op.isFactored());
 		op = new CFGOperator(grammar[12]);
 		assertFalse(op.isFactored());
+	}
+	
+	@Test
+	void testFactor() {
+		ContextFreeGrammar g = ContextFreeGrammar.isValidCFG(
+				"S -> B y z C | C y z B C\n" + 
+				"B -> b | c d\n" + 
+				"C -> e g | e f | c\n");
+		g.setId("G1");
+		CFGOperator op = new CFGOperator(g);
+		op.factorGrammar(2);
 	}
 
 }

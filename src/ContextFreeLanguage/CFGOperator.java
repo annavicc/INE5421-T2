@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
 /**
  * This class is responsible for
  * First, Follow and First-NT sets for a CFG
@@ -449,6 +450,234 @@ public class CFGOperator {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Attempt to factor the grammar in n steps
+	 * @return the resulting grammars attempts of factoring
+	 */
+	public ArrayList<ContextFreeGrammar> factorGrammar(int steps) {
+		ArrayList<ContextFreeGrammar> attempts = new ArrayList<>();
+		if (isFactored()) {
+			return attempts;
+		}
+		
+		int i = 1;
+		ContextFreeGrammar previous = grammar;
+		while (i <= steps) {
+			ContextFreeGrammar g = factorGrammar(previous);
+			g.setId(grammar.getId() + " [F" + i + "]");
+			CFGOperator op = new CFGOperator(g);
+			if (op.isFactored()) {
+				break;
+			}
+			attempts.add(g);
+			previous = g;
+			i++;
+		}
+		return attempts;
+	}
+	
+	
+	/**
+	 * Transforms production set into an array list 
+	 * @param p the production set
+	 * @return the set into an arraylist
+	 */
+	private ArrayList<String> getProdList(Set<String> p) {
+		ArrayList<String> l = new ArrayList<>();
+		for (String s : p) {
+			l.add(s);
+		}
+		return l;
+	}
+	
+	/**
+	 * Factor a given grammar in 1 step.
+	 * If not factored in 1 step, call this function again
+	 * @param g the grammar to be factored
+	 * @return a 1 step factored grammar (can be factored or not)
+	 */
+	public ContextFreeGrammar factorGrammar(ContextFreeGrammar g) {
+		ContextFreeGrammar newG = new ContextFreeGrammar(g); // The new grammar
+		Set<String> prod = null;
+		ArrayList<String> nfProd1 = null; // not factored prod1
+		ArrayList<String> nfProd2 = null; // not factored prod2		
+		// New productions
+		ArrayList<HashMap<String, HashSet<String>>> newProductions = new ArrayList<HashMap<String, HashSet<String>> >();
+		boolean goToTheNext = true; // if there is indirect non factoring
+		
+		for(String nonTerminal : newG.getVn()) {
+			prod = newG.getGrammarProductions(nonTerminal);
+			ArrayList<String> prods = getProdList(prod);
+			for(int i = 0; i < prods.size(); i++){
+				nfProd1 = breakSententialForm(prods.get(i));
+				for(int j = i+1; j<prods.size(); j++){
+					nfProd2 = breakSententialForm(prods.get(j));
+					if(nfProd1.get(0).equals(nfProd2.get(0))) { // Direct
+						newG.removeProduction(nonTerminal, prods.get(i));
+						newG.removeProduction(nonTerminal, prods.get(j));
+						newProductions.add(directFactor(nonTerminal, nfProd1, nfProd2));
+						if (!(vt.contains(nfProd1.get(0)) && vt.contains(nfProd2.get(0)))) {
+							goToTheNext = true;
+						}
+					}
+					// Indirect
+					if(goToTheNext) {
+						Set<String> firstTmp1 = getProductionFirstSet(nfProd1);
+						Set<String> firstTmp2 = getProductionFirstSet(nfProd2);
+						Set<String> firstVn1 = getProductionFirstNT(nonTerminal, nfProd1);
+						Set<String> firstVn2 = getProductionFirstNT(nonTerminal, nfProd2);
+						 
+						if (!intersectionisEmpty(firstTmp1, firstTmp2) || !intersectionisEmpty(firstVn1, firstVn2)) {
+							HashMap<String, HashSet<String>> ind1 = indirectFactor(nonTerminal, nfProd1.get(0));
+							HashMap<String, HashSet<String>> ind2 = indirectFactor(nonTerminal, nfProd2.get(0));
+							newProductions.add(ind1);
+							newProductions.add(ind2);
+							newG.removeProduction(nonTerminal, prods.get(i));
+							newG.removeProduction(nonTerminal, prods.get(j));
+						}
+					}
+				}
+				goToTheNext = true;
+			}
+		}
+		
+		for (HashMap<String, HashSet<String>>  map : newProductions) {
+				for (String key: map.keySet()) {
+					g.addVn(key);
+					for (String pp : map.get(key)){ 
+						if (pp.equals("&")) { // if an epsilon was added, add & to the grammar vt set
+							g.addVt("&");
+						}
+						Set<String> s = g.getGrammarProductions(key);
+						s.add(pp);
+						g.addProduction(key, s);
+					}
+				}
+		}
+		System.out.println(newG.getDefinition());
+		return newG;
+	}
+	
+	/**
+	 * Factor indirect not factoring situations
+	 * @param vn the non terminal whose productions are not factored
+	 * @param nt the not factored symbol
+	 * @return the new set of productions after 1 step of fatoration
+	 */
+	private HashMap<String, HashSet<String>> indirectFactor(String vn, String nf) {
+			HashMap<String, HashSet<String>> prod = new HashMap<String, HashSet<String>>();
+			Set<String> newS = grammar.getGrammarProductions(vn);
+			for (String vnP : newS) {
+				ArrayList<String> symb = breakSententialForm(vnP);
+				if (symb.get(0).equals(nf)) {
+					String newP = "";;
+					for (int i = 0; i < symb.size(); i++) {
+						if (i == 0) {
+							newP = "";
+						} else {
+							newP += symb.get(i) + " ";
+						}
+					}
+				HashSet<String> existing = (HashSet<String>) grammar.getGrammarProductions(nf);
+				HashSet<String> set = new HashSet<>();
+				for (String s : existing) {
+					String str = s + " " + newP;
+					set.add(str);
+				}
+				prod.put(vn, set);
+				}
+			}
+			return prod;	
+	}
+	
+	/**
+	 * Verify if the intersection between 2 sets is empty
+	 * @param s1 the first set
+	 * @param s2 the second set
+	 * @return true if the intersection is empty
+	 */
+	public boolean intersectionisEmpty(Set<String> s1, Set<String> s2) {
+		for (String s : s1) {
+			if (s2.contains(s)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Factor direct not factoring situations
+	 * @param vn the non terminal whose productions are not factored
+	 * @param prod1 the production that is not factored
+	 * @param prod2 the production that is not factored
+	 * @return the new set of productions after the factoring process
+	 */
+	private HashMap<String, HashSet<String>> directFactor(String vn, ArrayList<String> prod1, ArrayList<String> prod2) {
+		HashMap<String, HashSet<String>> prod = new HashMap<String, HashSet<String>>();
+		String common = "";
+		String p1 = "";
+		String p2 = "";
+		int length = prod2.size();
+		
+		if (prod1.size() < prod2.size()) {
+			length = prod1.size();
+		}
+		int i = 0;
+		for (; i < length; i++) {
+			if(prod1.get(i).equals(prod2.get(i))) {
+				common += prod1.get(i) + " ";
+			} else {
+				common = common.substring(0, common.length()-1);
+				break;
+			}
+		}
+		
+		for (int j = i; j < prod1.size(); j++) {
+			p1 += prod1.get(j) + " ";
+		}
+		for (int j = i; j < prod2.size(); j++) {
+			p2 += prod2.get(j) + " ";
+		}
+		if (p2.length() > 1) {
+			p2 = p2.substring(0, p2.length() - 1);
+		}
+		if (p1.length() > 1) {
+			p1 = p1.substring(0, p1.length()-1);
+		}
+		
+		prod.put(vn+""+1, new HashSet<>());
+		HashSet<String> pset = new HashSet<>();
+		pset.add(common + " " + vn + "" + 1);
+		prod.put(vn, pset);
+		
+		if (p2.equals("") || p1.equals("")) {
+			pset = prod.get(vn + "" + 1);
+			pset.add("&");
+			prod.put(vn + "" + 1, pset);
+		}
+		if (!p1.equals("")) {
+			pset = prod.get(vn + "" + 1);
+			pset.add(p1);
+			prod.put(vn + "" + 1, pset);
+		}
+		if (!p2.equals("")) {
+			pset = prod.get(vn + "" + 1);
+			pset.add(p2);
+			prod.put(vn + "" + 1, pset);
+		}
+		return prod;
+	}
+	
+	// TODO transform G in proper
+	public ArrayList<ContextFreeGrammar> eliminateLeftRecursion() {
+		ArrayList<ContextFreeGrammar> results = new ArrayList<>();
+		if (!hasLeftRecursion()) {
+			return results;
+		}
+		return results;
+		
 	}
 	
 }

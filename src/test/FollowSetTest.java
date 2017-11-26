@@ -87,12 +87,10 @@ class FollowSetTest {
 	@Test
 	void testFollowSetG0() {
 		CFGOperator op = new CFGOperator(grammar[0]);
-		HashMap<String, Set<String>> follow = op.getFollowSet();
-		
-		Set<String> followS = follow.get("S");
-		Set<String> followB = follow.get("B");
-		Set<String> followC = follow.get("C");
 
+		Set<String> followS = op.getFollow("S");
+		Set<String> followB = op.getFollow("B");
+		Set<String> followC = op.getFollow("C");
 		Set<String> expectedFollow = new HashSet<String>();
 		expectedFollow.add("$");
 		assertTrue(followS.equals(expectedFollow));
@@ -108,17 +106,16 @@ class FollowSetTest {
 		expectedFollow.clear();
 	}
 	
-//	@Test
+	@Test
 	void testFollowSetG1() {
 		CFGOperator op = new CFGOperator(grammar[1]);
-		HashMap<String, Set<String>> follow = op.getFollowSet();
 		
-		Set<String> followS = follow.get("S");
-		Set<String> followA = follow.get("A");
-		Set<String> followB = follow.get("B");
-		Set<String> followC = follow.get("C");
-		Set<String> followD = follow.get("D");
-		Set<String> followE = follow.get("E");
+		Set<String> followS = op.getFollow("S");
+		Set<String> followA = op.getFollow("A");
+		Set<String> followB = op.getFollow("B");
+		Set<String> followC = op.getFollow("C");
+		Set<String> followD = op.getFollow("D");
+		Set<String> followE = op.getFollow("E");
 		Set<String> expectedFollow = new HashSet<String>();
 		
 		expectedFollow.add("$");
@@ -153,11 +150,10 @@ class FollowSetTest {
 	@Test
 	void testFollowSetG2() {
 		CFGOperator op = new CFGOperator(grammar[2]);
-		HashMap<String, Set<String>> follow = op.getFollowSet();
 		
-		Set<String> followS = follow.get("S");
-		Set<String> followA = follow.get("A");
-		Set<String> followB = follow.get("B");
+		Set<String> followS = op.getFollow("S");
+		Set<String> followA = op.getFollow("A");
+		Set<String> followB = op.getFollow("B");
 		Set<String> expectedFollow = new HashSet<String>();
 		
 		expectedFollow.add("$");
@@ -169,11 +165,10 @@ class FollowSetTest {
 	@Test
 	void testFollowSetG3() {
 		CFGOperator op = new CFGOperator(grammar[3]);
-		HashMap<String, Set<String>> follow = op.getFollowSet();
 		
-		Set<String> followS = follow.get("S");
-		Set<String> followA = follow.get("B");
-		Set<String> followB = follow.get("C");
+		Set<String> followS = op.getFollow("S");
+		Set<String> followA = op.getFollow("B");
+		Set<String> followB = op.getFollow("C");
 		Set<String> expectedFollow = new HashSet<String>();
 		
 		expectedFollow.add("$");
@@ -192,9 +187,8 @@ class FollowSetTest {
 	@Test
 	void testFollowSetG4() {
 		CFGOperator op = new CFGOperator(grammar[4]);
-		HashMap<String, Set<String>> follow = op.getFollowSet();
 
-		Set<String> followS = follow.get("S");
+		Set<String> followS = op.getFollow("S");
 		Set<String> expectedFollow = new HashSet<String>();
 
 		expectedFollow.add("$");
@@ -206,13 +200,12 @@ class FollowSetTest {
 	@Test
 	void testFollowSetG5() {
 		CFGOperator op = new CFGOperator(grammar[5]);
-		HashMap<String, Set<String>> follow = op.getFollowSet();
 		
-		Set<String> followS = follow.get("S");
-		Set<String> followA = follow.get("A");
-		Set<String> followB = follow.get("B");
-		Set<String> followC = follow.get("C");
-		Set<String> followD = follow.get("D");
+		Set<String> followS = op.getFollow("S");
+		Set<String> followA = op.getFollow("A");
+		Set<String> followB = op.getFollow("B");
+		Set<String> followC = op.getFollow("C");
+		Set<String> followD = op.getFollow("D");
 		Set<String> expectedFollow = new HashSet<String>();
 		
 		expectedFollow.add("$");
@@ -239,11 +232,11 @@ class FollowSetTest {
 	@Test
 	void testFollowSetG6() {
 		CFGOperator op = new CFGOperator(grammar[6]);
-		HashMap<String, Set<String>> follow = op.getFollowSet();
+		HashMap<String, Set<String>> follow = op.getFollow();
 		
-		Set<String> followS = follow.get("S");
-		Set<String> followA = follow.get("A");
-		Set<String> followB = follow.get("B");
+		Set<String> followS = op.getFollow("S");
+		Set<String> followA = op.getFollow("A");
+		Set<String> followB = op.getFollow("B");
 		Set<String> expectedFollow = new HashSet<String>();
 		
 		expectedFollow.add("$");
@@ -271,13 +264,12 @@ class FollowSetTest {
 	@Test
 	void testFollowSetG7() {
 		CFGOperator op = new CFGOperator(grammar[7]);
-		HashMap<String, Set<String>> follow = op.getFollowSet();
 		
-		Set<String> followE = follow.get("E");
-		Set<String> followE1 = follow.get("E1");
-		Set<String> followT = follow.get("T");
-		Set<String> followT1 = follow.get("T1");
-		Set<String> followF = follow.get("F");
+		Set<String> followE = op.getFollow("E");
+		Set<String> followE1 = op.getFollow("E1");
+		Set<String> followT = op.getFollow("T");
+		Set<String> followT1 = op.getFollow("T1");
+		Set<String> followF = op.getFollow("F");
 		Set<String> expectedFollow = new HashSet<String>();
 		
 		expectedFollow.add("$");
@@ -299,19 +291,17 @@ class FollowSetTest {
 	@Test
 	void testFollowSetG8() {
 		CFGOperator op = new CFGOperator(grammar[8]);
-		HashMap<String, Set<String>> follow = op.getFollowSet();
-		
-		Set<String> followA = follow.get("A");
-		Set<String> followB = follow.get("B");
-		Set<String> followC = follow.get("C");
-		Set<String> followD = follow.get("D");
-		Set<String> followE = follow.get("E");
-		Set<String> followG = follow.get("G");
-		Set<String> followH = follow.get("H");
-		Set<String> followJ = follow.get("J");
-		Set<String> followZ = follow.get("Z");
-		Set<String> followK = follow.get("K");
-		Set<String> followM = follow.get("M");
+		Set<String> followA = op.getFollow("A");
+		Set<String> followB = op.getFollow("B");
+		Set<String> followC = op.getFollow("C");
+		Set<String> followD = op.getFollow("D");
+		Set<String> followE = op.getFollow("E");
+		Set<String> followG = op.getFollow("G");
+		Set<String> followH = op.getFollow("H");
+		Set<String> followJ = op.getFollow("J");
+		Set<String> followZ = op.getFollow("Z");
+		Set<String> followK = op.getFollow("K");
+		Set<String> followM = op.getFollow("M");
 		Set<String> expectedFollow = new HashSet<String>();
 		
 		expectedFollow.add("$");
@@ -349,19 +339,17 @@ class FollowSetTest {
 	@Test
 	void testFollowSetG9() {
 		CFGOperator op = new CFGOperator(grammar[9]);
-		HashMap<String, Set<String>> follow = op.getFollowSet();
-		
-		Set<String> followA = follow.get("A");
-		Set<String> followB = follow.get("B");
-		Set<String> followC = follow.get("C");
-		Set<String> followD = follow.get("D");
-		Set<String> followE = follow.get("E");
-		Set<String> followG = follow.get("G");
-		Set<String> followH = follow.get("H");
-		Set<String> followJ = follow.get("J");
-		Set<String> followZ = follow.get("Z");
-		Set<String> followK = follow.get("K");
-		Set<String> followM = follow.get("M");
+		Set<String> followA = op.getFollow("A");
+		Set<String> followB = op.getFollow("B");
+		Set<String> followC = op.getFollow("C");
+		Set<String> followD = op.getFollow("D");
+		Set<String> followE = op.getFollow("E");
+		Set<String> followG = op.getFollow("G");
+		Set<String> followH = op.getFollow("H");
+		Set<String> followJ = op.getFollow("J");
+		Set<String> followZ = op.getFollow("Z");
+		Set<String> followK = op.getFollow("K");
+		Set<String> followM = op.getFollow("M");
 		Set<String> expectedFollow = new HashSet<String>();
 		
 		expectedFollow.add("$");
@@ -393,17 +381,16 @@ class FollowSetTest {
 	@Test
 	void testFollowSetG10() {
 		CFGOperator op = new CFGOperator(grammar[10]);
-		HashMap<String, Set<String>> follow = op.getFollowSet();
+		HashMap<String, Set<String>> follow = op.getFollow();
 		
-		Set<String> followX = follow.get("X");
-		Set<String> followY = follow.get("Y");
-		Set<String> followZ = follow.get("Z");
+		Set<String> followX = op.getFollow("X");
+		Set<String> followY = op.getFollow("Y");
+		Set<String> followZ = op.getFollow("Z");
 		Set<String> expectedFollow = new HashSet<String>();
 		
 		expectedFollow.add("$");
 		assertTrue(followX.equals(expectedFollow));
 		expectedFollow.clear();
-		
 		expectedFollow.add("m");
 		assertTrue(followY.equals(expectedFollow));
 		expectedFollow.clear();
@@ -416,20 +403,17 @@ class FollowSetTest {
 	@Test
 	void testFirstSetG11() {
 		CFGOperator op = new CFGOperator(grammar[11]);
-		HashMap<String, Set<String>> follow = op.getFollowSet();
-
-		Set<String> followS = follow.get("S");
-		Set<String> followA = follow.get("A");
-		Set<String> followB = follow.get("B");
-		Set<String> followC = follow.get("C");
-		Set<String> followD = follow.get("D");
+		Set<String> followS = op.getFollow("S");
+		Set<String> followA = op.getFollow("A");
+		Set<String> followB = op.getFollow("B");
+		Set<String> followC = op.getFollow("C");
+		Set<String> followD = op.getFollow("D");
 		Set<String> expectedFollow = new HashSet<String>();
-		
 		expectedFollow.add("$");
 		assertTrue(followS.equals(expectedFollow));
 		
 		assertTrue(followA.equals(expectedFollow));
-		
+
 		assertTrue(followB.equals(expectedFollow));
 		
 		expectedFollow.add("a");

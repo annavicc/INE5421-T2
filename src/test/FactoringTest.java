@@ -37,9 +37,9 @@ class FactoringTest {
 				"S -> ( S ) | &");
 		grammar[5] = ContextFreeGrammar.isValidCFG(
 				"S -> A B | C\n" + 
-						"A -> D | a | &\n" + 
-						"B -> b\n" + 
-						"C -> &\n" + 
+					"A -> D | a | &\n" + 
+					"B -> b\n" + 
+					"C -> &\n" + 
 				"D -> d");
 		grammar[6] = ContextFreeGrammar.isValidCFG(
 				"S -> A S B | d\n" + 

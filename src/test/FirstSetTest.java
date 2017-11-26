@@ -84,9 +84,9 @@ class FirstSetTest {
 	@Test
 	void testFirstSetG0() {
 		CFGOperator op = new CFGOperator(grammar[0]);
-		Set<String> firstS = op.getFirstSet("S");
-		Set<String> firstB = op.getFirstSet("B");
-		Set<String> firstC = op.getFirstSet("C");
+		Set<String> firstS = op.getFirst("S");
+		Set<String> firstB = op.getFirst("B");
+		Set<String> firstC = op.getFirst("C");
 		Set<String> expectedFirst = new HashSet<String>();
 		expectedFirst.add("a");
 		expectedFirst.add("x");
@@ -106,12 +106,12 @@ class FirstSetTest {
 	@Test
 	void testFirstSetG1() {
 		CFGOperator op = new CFGOperator(grammar[1]);
-		Set<String> firstS = op.getFirstSet("S");
-		Set<String> firstA = op.getFirstSet("A");
-		Set<String> firstB = op.getFirstSet("B");
-		Set<String> firstC = op.getFirstSet("C");
-		Set<String> firstD = op.getFirstSet("D");
-		Set<String> firstE = op.getFirstSet("E");
+		Set<String> firstS = op.getFirst("S");
+		Set<String> firstA = op.getFirst("A");
+		Set<String> firstB = op.getFirst("B");
+		Set<String> firstC = op.getFirst("C");
+		Set<String> firstD = op.getFirst("D");
+		Set<String> firstE = op.getFirst("E");
 		
 		Set<String> expectedFirst = new HashSet<String>();
 		expectedFirst.add("a");
@@ -148,9 +148,9 @@ class FirstSetTest {
 	@Test
 	void testFirstSetG2() {
 		CFGOperator op = new CFGOperator(grammar[2]);
-		Set<String> firstS = op.getFirstSet("S");
-		Set<String> firstA = op.getFirstSet("A");
-		Set<String> firstB = op.getFirstSet("B");
+		Set<String> firstS = op.getFirst("S");
+		Set<String> firstA = op.getFirst("A");
+		Set<String> firstB = op.getFirst("B");
 		Set<String> expectedFirst = new HashSet<String>();
 		
 		expectedFirst.add("&");
@@ -163,9 +163,9 @@ class FirstSetTest {
 	@Test
 	void testFirstSetG3() {
 		CFGOperator op = new CFGOperator(grammar[3]);
-		Set<String> firstS = op.getFirstSet("S");
-		Set<String> firstB = op.getFirstSet("B");
-		Set<String> firstC = op.getFirstSet("C");
+		Set<String> firstS = op.getFirst("S");
+		Set<String> firstB = op.getFirst("B");
+		Set<String> firstC = op.getFirst("C");
 		Set<String> expectedFirst = new HashSet<String>();
 
 		expectedFirst.add("a");
@@ -189,7 +189,7 @@ class FirstSetTest {
 	@Test
 	void testFirstSetG4() {
 		CFGOperator op = new CFGOperator(grammar[4]);
-		Set<String> firstS = op.getFirstSet("S");
+		Set<String> firstS = op.getFirst("S");
 		Set<String> expectedFirst = new HashSet<String>();
 
 		expectedFirst.add("(");
@@ -201,11 +201,11 @@ class FirstSetTest {
 	@Test
 	void testFirstSetG5() {
 		CFGOperator op = new CFGOperator(grammar[5]);
-		Set<String> firstS = op.getFirstSet("S");
-		Set<String> firstA = op.getFirstSet("A");
-		Set<String> firstB = op.getFirstSet("B");
-		Set<String> firstC = op.getFirstSet("C");
-		Set<String> firstD = op.getFirstSet("D");
+		Set<String> firstS = op.getFirst("S");
+		Set<String> firstA = op.getFirst("A");
+		Set<String> firstB = op.getFirst("B");
+		Set<String> firstC = op.getFirst("C");
+		Set<String> firstD = op.getFirst("D");
 		Set<String> expectedFirst = new HashSet<String>();
 		
 		expectedFirst.add("a");
@@ -237,9 +237,9 @@ class FirstSetTest {
 	@Test
 	void testFirstSetG6() {
 		CFGOperator op = new CFGOperator(grammar[6]);
-		Set<String> firstS = op.getFirstSet("S");
-		Set<String> firstA = op.getFirstSet("A");
-		Set<String> firstB = op.getFirstSet("B");
+		Set<String> firstS = op.getFirst("S");
+		Set<String> firstA = op.getFirst("A");
+		Set<String> firstB = op.getFirst("B");
 		Set<String> expectedFirst = new HashSet<String>();
 		expectedFirst.add("a");
 		expectedFirst.add("d");
@@ -260,11 +260,11 @@ class FirstSetTest {
 	@Test
 	void testFirstSetG7() {
 		CFGOperator op = new CFGOperator(grammar[7]);
-		Set<String> firstE = op.getFirstSet("E");
-		Set<String> firstE1 = op.getFirstSet("E1");
-		Set<String> firstT = op.getFirstSet("T");
-		Set<String> firstT1 = op.getFirstSet("T1");
-		Set<String> firstF = op.getFirstSet("F");
+		Set<String> firstE = op.getFirst("E");
+		Set<String> firstE1 = op.getFirst("E1");
+		Set<String> firstT = op.getFirst("T");
+		Set<String> firstT1 = op.getFirst("T1");
+		Set<String> firstF = op.getFirst("F");
 		Set<String> expectedFirst = new HashSet<String>();
 
 		expectedFirst.add("id");
@@ -296,12 +296,12 @@ class FirstSetTest {
 	@Test
 	void testFirstSetG8() {
 		CFGOperator op = new CFGOperator(grammar[8]);
-		Set<String> firstA = op.getFirstSet("A");
-		Set<String> firstB = op.getFirstSet("B");
-		Set<String> firstC = op.getFirstSet("C");
-		Set<String> firstE = op.getFirstSet("E");
-		Set<String> firstH = op.getFirstSet("H");
-		Set<String> firstM = op.getFirstSet("M");
+		Set<String> firstA = op.getFirst("A");
+		Set<String> firstB = op.getFirst("B");
+		Set<String> firstC = op.getFirst("C");
+		Set<String> firstE = op.getFirst("E");
+		Set<String> firstH = op.getFirst("H");
+		Set<String> firstM = op.getFirst("M");
 		Set<String> expectedFirst = new HashSet<String>();
 
 		expectedFirst.add("a");
@@ -337,12 +337,12 @@ class FirstSetTest {
 	@Test
 	void testFirstSetG9() {
 		CFGOperator op = new CFGOperator(grammar[9]);
-		Set<String> firstA = op.getFirstSet("A");
-		Set<String> firstB = op.getFirstSet("B");
-		Set<String> firstC = op.getFirstSet("C");
-		Set<String> firstE = op.getFirstSet("E");
-		Set<String> firstH = op.getFirstSet("H");
-		Set<String> firstM = op.getFirstSet("M");
+		Set<String> firstA = op.getFirst("A");
+		Set<String> firstB = op.getFirst("B");
+		Set<String> firstC = op.getFirst("C");
+		Set<String> firstE = op.getFirst("E");
+		Set<String> firstH = op.getFirst("H");
+		Set<String> firstM = op.getFirst("M");
 		Set<String> expectedFirst = new HashSet<String>();
 
 		expectedFirst.add("a");
@@ -374,9 +374,9 @@ class FirstSetTest {
 	@Test
 	void testFirstSetG10() {
 		CFGOperator op = new CFGOperator(grammar[10]);
-		Set<String> firstX = op.getFirstSet("X");
-		Set<String> firstY = op.getFirstSet("Y");
-		Set<String> firstZ = op.getFirstSet("Z");
+		Set<String> firstX = op.getFirst("X");
+		Set<String> firstY = op.getFirst("Y");
+		Set<String> firstZ = op.getFirst("Z");
 		Set<String> expectedFirst = new HashSet<String>();
 
 		expectedFirst.add("m");
@@ -398,11 +398,11 @@ class FirstSetTest {
 	@Test
 	void testFirstSetG11() {
 		CFGOperator op = new CFGOperator(grammar[11]);
-		Set<String> firstS = op.getFirstSet("S");
-		Set<String> firstA = op.getFirstSet("A");
-		Set<String> firstB = op.getFirstSet("B");
-		Set<String> firstC = op.getFirstSet("C");
-		Set<String> firstD = op.getFirstSet("D");
+		Set<String> firstS = op.getFirst("S");
+		Set<String> firstA = op.getFirst("A");
+		Set<String> firstB = op.getFirst("B");
+		Set<String> firstC = op.getFirst("C");
+		Set<String> firstD = op.getFirst("D");
 		Set<String> expectedFirst = new HashSet<String>();
 
 		expectedFirst.add("a");

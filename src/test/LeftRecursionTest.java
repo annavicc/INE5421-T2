@@ -37,14 +37,14 @@ private ContextFreeGrammar grammar[];
 				"S -> ( S ) | &");
 		grammar[5] = ContextFreeGrammar.isValidCFG(
 				"S -> A B | C\n" + 
-						"A -> D | a | &\n" + 
-						"B -> b\n" + 
-						"C -> &\n" + 
+				"A -> D | a | &\n" + 
+				"B -> b | S\n" + 
+				"C -> &\n" + 
 				"D -> d");
 		grammar[6] = ContextFreeGrammar.isValidCFG(
 				"S -> A S B | d\n" + 
-						"A -> a\n" + 
-				"B -> A B |b | &");
+				"A -> a | &\n" + 
+				"B -> A B | b | &");
 		grammar[7] = ContextFreeGrammar.isValidCFG(
 				"E -> T E1\n" + 
 						"E1 -> + T E1 | &\n" + 
@@ -53,22 +53,22 @@ private ContextFreeGrammar grammar[];
 				"F -> id | ( E )");
 		grammar[8] = ContextFreeGrammar.isValidCFG(
 				"A -> B C | a b | H\n" + 
-						"B -> D | &\n" + 
-						"C -> f | G a | H E\n" + 
-						"E -> e | J\n" + 
-						"H -> K | & | a M\n" + 
+				"B -> D | &\n" + 
+				"C -> f | G a | H E\n" + 
+				"E -> e | J\n" + 
+				"H -> K | & | a M\n" + 
 				"M -> Z");
 		grammar[9] = ContextFreeGrammar.isValidCFG(""
 				+ "A -> B C | a b | H\n" + 
 				"B -> D | &\n" + 
-				"C -> f | G a | H E\n" + 
+				"C -> f | G a | H E | A\n" + 
 				"E -> e | J\n" + 
 				"H -> K | a M\n" + 
 				"M -> Z");
 		
 		grammar[10] = ContextFreeGrammar.isValidCFG(
-				"X -> Y Z\n" + 
-						"Y -> m | n | &\n" + 
+				"X -> X Z | Y\n" + 
+				"Y -> m | n | &\n" + 
 				"Z -> m");
 		grammar[11] = ContextFreeGrammar.isValidCFG(""
 				+ "S -> A B | C D\n" + 
@@ -88,7 +88,31 @@ private ContextFreeGrammar grammar[];
 	@Test
 	void hasLeftRecursiontest() {
 		CFGOperator op = new CFGOperator(grammar[0]);
-		op.hasLeftRecursion();
+		assertFalse(op.hasLeftRecursion());
+		op = new CFGOperator(grammar[1]);
+		assertFalse(op.hasLeftRecursion());
+		op = new CFGOperator(grammar[2]);
+		assertFalse(op.hasLeftRecursion());
+		op = new CFGOperator(grammar[3]);
+		assertFalse(op.hasLeftRecursion());
+		op = new CFGOperator(grammar[4]);
+		assertFalse(op.hasLeftRecursion());
+		op = new CFGOperator(grammar[5]);
+		assertTrue(op.hasLeftRecursion());
+		op = new CFGOperator(grammar[6]);
+		assertTrue(op.hasLeftRecursion());
+		op = new CFGOperator(grammar[7]);
+		assertFalse(op.hasLeftRecursion());
+		op = new CFGOperator(grammar[8]);
+		assertFalse(op.hasLeftRecursion());
+		op = new CFGOperator(grammar[9]);
+		assertTrue(op.hasLeftRecursion());
+		op = new CFGOperator(grammar[10]);
+		assertTrue(op.hasLeftRecursion());
+		op = new CFGOperator(grammar[11]);
+		assertFalse(op.hasLeftRecursion());
+		op = new CFGOperator(grammar[12]);
+		assertFalse(op.hasLeftRecursion());
 	}
 
 }

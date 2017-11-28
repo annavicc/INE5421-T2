@@ -795,12 +795,14 @@ public class CFGOperator {
 					alfa += aiProdSymbols.get(i) + " ";
 				}
 			}
-			alfa = alfa.substring(0, alfa.length()-1);
+			if (alfa.length() > 0) {
+				alfa = alfa.substring(0, alfa.length()-1);
+			}
 			alfaProductions.add(alfa);
 		}
 		
 		for (String s: betaProductions) {
-			if (s.equals(" & ")) {
+			if (isEpsilonProductions(s)) {
 				set = newProd.get(ai);
 				set.add(newVn);
 				newProd.put(ai, set);
@@ -840,6 +842,9 @@ public class CFGOperator {
 		for (String aiP : aiProd) {
 			aiP = aiP.substring(1);
 			ArrayList<String> newAiProd = breakSententialForm(aiP);
+			if (newAiProd.size() <= 0) {
+				continue;
+			}
 			if (!newAiProd.get(0).equals(aj)) {
 				continue;
 			} else {
@@ -865,6 +870,15 @@ public class CFGOperator {
 		ArrayList<HashMap<String, HashSet<String>>> ar = new ArrayList<HashMap<String, HashSet<String>>  >();
 		ar.add(prod);
 		return ar;
+	}
+	
+	public boolean isEpsilonProductions(String s) {
+		for (int i = 0; i < s.length(); i++) {
+			if (s.charAt(i) == '&') {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }

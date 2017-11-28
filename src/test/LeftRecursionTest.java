@@ -120,6 +120,17 @@ private ContextFreeGrammar grammar[];
 		assertFalse(op.hasLeftRecursion());
 		op = new CFGOperator(grammar[12]);
 		assertFalse(op.hasLeftRecursion());
+		
+//		op = new CFGOperator(ContextFreeGrammar.isValidCFG(
+//				"P -> K L | b K L e\n" + 
+//				"K -> c K | T V\n" +
+//				"T -> t T | &\n" +
+//				"V -> v V | &\n" +
+//				"L -> C L1\n" +
+//				"L1 -> C L1 | &\n" +
+//				"C -> com | &"));
+//		// Transform G in proper
+//		System.out.println(op.eliminateLeftRecursion().get(6).getDefinition());
 	}
 	
 	/**

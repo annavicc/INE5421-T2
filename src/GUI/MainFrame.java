@@ -125,11 +125,11 @@ public class MainFrame extends JFrame {
 		});
 		
 		JButton btnMainOperations = new JButton("CFG Operations");
-//		btnMainOperations.addActionListener(new ActionListener() {
-//		    public void actionPerformed(ActionEvent e) {
-//		    	new OperationsFrame(MainFrame.this);
-//		    }
-//		});
+		btnMainOperations.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	new OperationsFrame(MainFrame.this);
+		    }
+		});
 		
 		JButton btnMainVerifications = new JButton("CFG Properties");
 		btnMainVerifications.addActionListener(new ActionListener() {

@@ -68,9 +68,9 @@ public class PropertiesFrame extends JFrame {
 		
 		JPanel propertiesFramePanel = new JPanel();
 		
-		JLabel lblGrammarSelection = new JLabel("Select the Grammar Below:");
-		JLabel lblSetentialForm = new JLabel("Enter Setential Form Below:");
-		JLabel lblPropertySelection = new JLabel("Select the Verification Below:");
+		JLabel lblGrammarSelection = new JLabel("Select the Grammar:");
+		JLabel lblSetentialForm = new JLabel("Enter Setential Form:");
+		JLabel lblPropertySelection = new JLabel("Select the Verification:");
 		
 		
 		cbPropertiesCFG = new JComboBox<ContextFreeGrammar>();

@@ -1,6 +1,8 @@
 package test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 
@@ -144,5 +146,32 @@ class FactoringTest {
 				"S1 -> f y z B C | d y z C | y z B C | g y z B C \n" + 
 				"" , results.get(results.size()-1).getDefinition());
 	}
+	
+	
+	/**
+	 * Test the factoring process of a non factored grammar
+	 */
+	@Test
+	
+	void testFactorG1() {
+		ContextFreeGrammar g = ContextFreeGrammar.isValidCFG(
+				"S -> b c D | B c d\n" + 
+				"B -> b B | b\n" + 
+				"D -> d D | d");
+		g.setId("G1");
+		CFGOperator op = new CFGOperator(g);
+		ArrayList<ContextFreeGrammar> results = new ArrayList<>();
+		assertFalse(op.isFactored()); // not factored
+		results = op.factorGrammar(5);
+		assertTrue(op.isFactored()); // must be factored
+
+		assertEquals("S -> \n" + 
+				"B -> b  B1 \n" + 
+				"D -> d  D1 \n" + 
+				"D1 -> D | & \n" + 
+				"B1 -> B | & \n", results.get(results.size()-1).getDefinition());
+	}
+	
+	
 	
 }

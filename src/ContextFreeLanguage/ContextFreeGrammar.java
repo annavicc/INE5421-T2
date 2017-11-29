@@ -197,7 +197,9 @@ public class ContextFreeGrammar {
 			for (String prod : prodList) {
 				aux += prod + " | ";
 			}
-			aux = aux.substring(0, aux.length()-2);
+			if (aux.length() > 0) { 
+				aux = aux.substring(0, aux.length()-2);
+			}
 			if (vN.equals(this.s)) {
 				grammar = vN + " -> " + aux + "\n" + grammar;
 			} else {

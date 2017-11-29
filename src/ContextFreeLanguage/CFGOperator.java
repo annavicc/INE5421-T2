@@ -24,6 +24,7 @@ public class CFGOperator {
 	
 	public CFGOperator(ContextFreeGrammar g) {
 		this.grammar = g;
+		
 		this.vn = grammar.getVn();
 		this.vt = grammar.getVt();
 		// Initializes sets
@@ -125,7 +126,6 @@ public class CFGOperator {
 		
 		prodSymbol = production.get(symbolCount); // first symbol of the production
 		goToTheNext = true;
-		
 		// If it is a terminal
 		if(vt.contains(prodSymbol)) {
 			firstSet.add(prodSymbol); // the first set is the terminal
@@ -140,7 +140,9 @@ public class CFGOperator {
 				} else { // non terminal
 					nextFirst = getFirst().get(prodSymbol); // get the first set for the vn
 					firstSet.addAll(nextFirst);
-					firstSet.remove("&"); // Epsilon belongs to first only if it was the last production
+					if (firstSet.contains("&")) {
+						firstSet.remove("&"); // Epsilon belongs to first only if it was the last production
+					}
 					if (nextFirst.contains("&")) { // There's epsilon production
 						if(++symbolCount >= production.size()){
 							goToTheNext = false;
@@ -420,13 +422,13 @@ public class CFGOperator {
 				for (String prodSymbol : aux) {
 					// If the first set already contains the symbol
 					if (firstSet.contains(prodSymbol)) {
-						if (prodSymbol.equals("&")) {
+						if (isEpsilonProductions(prodSymbol)) {
 							// only not factored if both productions go to epsilon
 							if (aux.size() == 1) {
 								return false;
 							}
 						}
-						else if (!prodSymbol.equals("&")) {
+						else if (!isEpsilonProductions(prodSymbol)) {
 							return false;
 						}
 					}
@@ -468,10 +470,10 @@ public class CFGOperator {
 			ContextFreeGrammar g = factorGrammar(previous);
 			g.setId(grammar.getId() + " [F" + i + "]");
 			CFGOperator op = new CFGOperator(g);
+			attempts.add(g);
 			if (op.isFactored()) {
 				break;
 			}
-			attempts.add(g);
 			previous = g;
 			i++;
 		}
@@ -550,7 +552,7 @@ public class CFGOperator {
 				for (String key: map.keySet()) {
 					g.addVn(key);
 					for (String pp : map.get(key)){ 
-						if (pp.equals("&")) { // if an epsilon was added, add & to the grammar vt set
+						if (isEpsilonProductions(pp)) { // if an epsilon was added, add & to the grammar vt set
 							g.addVt("&");
 						}
 						Set<String> s = g.getGrammarProductions(key);
@@ -706,7 +708,7 @@ public class CFGOperator {
 							for (String key: map.keySet()) {
 								newG.addVn(key);
 								for (String pp : map.get(key)){ 
-									if (pp.equals("&")) { // if an epsilon was added, add & to the grammar vt set
+									if (isEpsilonProductions(pp)) { // if an epsilon was added, add & to the grammar vt set
 										newG.addVt("&");
 									}
 									Set<String> s = newG.getGrammarProductions(key);
@@ -728,7 +730,7 @@ public class CFGOperator {
 					for (String key: map.keySet()) {
 						newG.addVn(key);
 						for (String pp : map.get(key)){ 
-							if (pp.equals("&")) { // if an epsilon was added, add & to the grammar vt set
+							if (isEpsilonProductions(pp)) { // if an epsilon was added, add & to the grammar vt set
 								newG.addVt("&");
 							}
 							Set<String> s = newG.getGrammarProductions(key);
@@ -851,7 +853,7 @@ public class CFGOperator {
 				for (String ajP : ajProd) {
 					ajP = ajP.substring(1);
 					newAiProd.remove(0);
-					if (!ajP.equals("&")) {
+					if (!isEpsilonProductions(ajP)) {
 						newAiProd.add(0, ajP);
 					}
 					HashSet<String> p = prod.get(ai);
@@ -873,12 +875,15 @@ public class CFGOperator {
 	}
 	
 	public boolean isEpsilonProductions(String s) {
+		boolean hasEps = true;
 		for (int i = 0; i < s.length(); i++) {
-			if (s.charAt(i) == '&') {
-				return true;
+			if (s.charAt(i) != '&') {
+				if(!Character.isSpaceChar(s.charAt(i))) {
+					hasEps = false;
+				}
 			}
 		}
-		return false;
+		return hasEps;
 	}
 	
 }

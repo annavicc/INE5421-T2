@@ -131,7 +131,7 @@ public class AddCFGFrame extends JFrame {
 //				E -> b
 				
 				
-				CFGOperator op = new CFGOperator(l);
+//				CFGOperator op = new CFGOperator(l);
 //				System.out.println(op.isFactored());
 //				System.out.println(op.hasLeftRecursion());
 //				op.printFollowSet();

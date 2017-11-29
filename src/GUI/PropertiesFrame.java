@@ -1,24 +1,29 @@
 package GUI;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import ContextFreeLanguage.ContextFreeGrammar;
-
-import javax.swing.JLabel;
-import javax.swing.JComboBox;
-import javax.swing.JButton;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+
+import ContextFreeLanguage.CFGOperator;
+import ContextFreeLanguage.ContextFreeGrammar;
 
 public class PropertiesFrame extends JFrame {
 
+	// Auto-generated UID:
+	private static final long serialVersionUID = -9024968109058945031L;
+	
 	private MainFrame mainFrame;
 	private JComboBox<ContextFreeGrammar> cbPropertiesCFG;
 	private JPanel contentPane;
@@ -55,7 +60,7 @@ public class PropertiesFrame extends JFrame {
 		setTitle("Context Free Grammar Properties");
 		this.setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 200, 750, 180);
+		setBounds(100, 200, 750, 190);
 		contentPane = new JPanel();
 
 		this.getContentPane().setLayout(new BorderLayout(0, 0));
@@ -64,23 +69,94 @@ public class PropertiesFrame extends JFrame {
 		JPanel propertiesFramePanel = new JPanel();
 		
 		JLabel lblGrammarSelection = new JLabel("Select the Grammar Below:");
-		
-		cbPropertiesCFG = new JComboBox();
-		
-		JComboBox cbPropertiesProp = new JComboBox();
-		cbPropertiesProp.addItem("Has Left Recursion?");
-		cbPropertiesProp.addItem("Is Factored?");
-		
+		JLabel lblSetentialForm = new JLabel("Enter Setential Form Below:");
 		JLabel lblPropertySelection = new JLabel("Select the Verification Below:");
 		
+		
+		cbPropertiesCFG = new JComboBox<ContextFreeGrammar>();
+		HashMap<String, ContextFreeGrammar> languages = mainFrame.getLanguages();
+		for (String id : languages.keySet()) {
+			cbPropertiesCFG.addItem(languages.get(id));
+		}
+		
+		JComboBox<String> cbPropertiesProp = new JComboBox<String>();
+		cbPropertiesProp.addItem("First of:");
+		cbPropertiesProp.addItem("First Non-Terminal of:");
+		cbPropertiesProp.addItem("Follow of:");
+		cbPropertiesProp.addItem("Has Left Recursion?");
+		cbPropertiesProp.addItem("Is Factored?");
+		cbPropertiesProp.addActionListener (new ActionListener () {
+		    public void actionPerformed(ActionEvent e) {
+		    	String selected = String.valueOf(cbPropertiesProp.getSelectedItem());
+		    	if (selected.equals("Has Left Recursion?") || selected.equals("Is Factored?")) {
+		    		textField.setEnabled(false);
+		    		lblSetentialForm.setEnabled(false);
+		    	} else {
+		    		textField.setEnabled(true);
+		    		lblSetentialForm.setEnabled(true);
+		    	}
+		    }
+		});
+		
 		JButton btnVerify = new JButton("Verify");
+		btnVerify.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ContextFreeGrammar cfg = (ContextFreeGrammar) cbPropertiesCFG.getSelectedItem();
+				CFGOperator op = new CFGOperator(cfg);
+				String property = String.valueOf(cbPropertiesProp.getSelectedItem());
+				if (cfg == null) { 
+					return;
+				}
+				String response = "";
+				if (property.equals("Has Left Recursion?")) {
+					if (op.hasLeftRecursion()) {
+						response += cfg.getId() + " does have left recursion.\n"; 
+					} else {
+						response += cfg.getId() + " does not have left recursion.\n";
+					}
+				}
+				else if (property.equals("Is Factored?")) {
+					if (op.isFactored()) {
+						response += cfg.getId() + " is factored.\n"; 
+					} else {
+						response += cfg.getId() + " is not factored.\n";
+					}
+				}
+				else if (property.equals("First of:")) {
+					String input = textField.getText();
+					response += "First(" + input + ") in " + cfg.getId() + " is:\n";
+					for (String first : op.getFirst(input)) {
+						response += first + "\n";
+					}
+				}
+				else if (property.equals("First Non-Terminal of:")) {
+					String input = textField.getText();
+					response += "FirstNT(" + input + ") in " + cfg.getId() + " is:\n";
+					for (String first : op.getFirstNT(input)) {
+						response += first + "\n";
+					}
+				}
+				else if (property.equals("Follow of:")) {
+					String input = textField.getText();
+					response += "Follow(" + input + ") in " + cfg.getId() + " is:\n";
+					for (String follow : op.getFollow(input)) {
+						response += follow+ "\n";
+					}
+				}
+				JOptionPane.showMessageDialog(PropertiesFrame.this, response);
+			}
+		});	
 		
 		JButton btnCancel = new JButton("Cancel");
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PropertiesFrame.this.exit();
+			}
+		});
 		
 		textField = new JTextField();
 		textField.setColumns(10);
 		
-		JLabel lblSetentialForm = new JLabel("Enter Setential Form Below:");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -93,7 +169,7 @@ public class PropertiesFrame extends JFrame {
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addComponent(lblGrammarSelection, GroupLayout.PREFERRED_SIZE, 221, GroupLayout.PREFERRED_SIZE)
 									.addGap(6))
-								.addComponent(cbPropertiesCFG, 0, 276, Short.MAX_VALUE))
+								.addComponent(cbPropertiesCFG, 0, 274, Short.MAX_VALUE))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
 								.addGroup(gl_contentPane.createSequentialGroup()
@@ -103,13 +179,12 @@ public class PropertiesFrame extends JFrame {
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 										.addComponent(textField, GroupLayout.PREFERRED_SIZE, 207, GroupLayout.PREFERRED_SIZE)
-										.addComponent(lblSetentialForm))
-									.addGap(12))
+										.addComponent(lblSetentialForm)))
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(btnVerify, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
-									.addGap(12)))))
+									.addComponent(btnVerify, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)))
+							.addGap(12)))
 					.addGap(0))
 		);
 		gl_contentPane.setVerticalGroup(
@@ -123,12 +198,12 @@ public class PropertiesFrame extends JFrame {
 							.addComponent(lblGrammarSelection)
 							.addComponent(lblSetentialForm)
 							.addComponent(lblPropertySelection)))
-					.addGap(18)
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(cbPropertiesCFG, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(textField, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-						.addComponent(cbPropertiesProp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+						.addComponent(cbPropertiesCFG, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
+						.addComponent(textField, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
+						.addComponent(cbPropertiesProp, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnVerify)
 						.addComponent(btnCancel))

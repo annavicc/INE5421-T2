@@ -1,6 +1,7 @@
 package test;
 
 import static org.junit.Assert.assertTrue;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -444,7 +445,7 @@ class FirstSetTest {
 		Set<String> firstC = op.getFirst("C");
 		Set<String> firstD = op.getFirst("D");
 		Set<String> expectedFirst = new HashSet<String>();
-
+		
 		expectedFirst.add("a");
 		expectedFirst.add("&");
 		assertTrue(firstS.equals(expectedFirst));

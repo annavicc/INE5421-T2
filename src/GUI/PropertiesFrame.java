@@ -12,12 +12,17 @@ import ContextFreeLanguage.ContextFreeGrammar;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JTextField;
 
 public class PropertiesFrame extends JFrame {
 
 	private MainFrame mainFrame;
 	private JComboBox<ContextFreeGrammar> cbPropertiesCFG;
 	private JPanel contentPane;
+	private JTextField textField;
 
 	
 	/**
@@ -50,43 +55,86 @@ public class PropertiesFrame extends JFrame {
 		setTitle("Context Free Grammar Properties");
 		this.setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 200, 750, 190);
+		setBounds(100, 200, 750, 180);
 		contentPane = new JPanel();
 
 		this.getContentPane().setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
 		
 		JPanel propertiesFramePanel = new JPanel();
-		propertiesFramePanel.setBounds(0, 0, 10, 10);
-		contentPane.add(propertiesFramePanel);
 		
 		JLabel lblGrammarSelection = new JLabel("Select the Grammar Below:");
-		lblGrammarSelection.setBounds(41, 34, 221, 15);
-		contentPane.add(lblGrammarSelection);
 		
 		cbPropertiesCFG = new JComboBox();
-		cbPropertiesCFG.setBounds(570, 61, 32, 24);
-		contentPane.add(cbPropertiesCFG);
 		
-		JComboBox cbPropertiesGrammar = new JComboBox();
-		cbPropertiesGrammar.addItem("Has Left Recursion?");
-		cbPropertiesGrammar.addItem("Is Factored?");
-		
-		cbPropertiesGrammar.setBounds(105, 61, 32, 24);
-		contentPane.add(cbPropertiesGrammar);
+		JComboBox cbPropertiesProp = new JComboBox();
+		cbPropertiesProp.addItem("Has Left Recursion?");
+		cbPropertiesProp.addItem("Is Factored?");
 		
 		JLabel lblPropertySelection = new JLabel("Select the Verification Below:");
-		lblPropertySelection.setBounds(479, 34, 221, 15);
-		contentPane.add(lblPropertySelection);
 		
 		JButton btnVerify = new JButton("Verify");
-		btnVerify.setBounds(621, 153, 117, 25);
-		contentPane.add(btnVerify);
 		
 		JButton btnCancel = new JButton("Cancel");
-		btnCancel.setBounds(479, 153, 117, 25);
-		contentPane.add(btnCancel);
+		
+		textField = new JTextField();
+		textField.setColumns(10);
+		
+		JLabel lblSetentialForm = new JLabel("Enter Setential Form Below:");
+		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(propertiesFramePanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addContainerGap()
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(lblGrammarSelection, GroupLayout.PREFERRED_SIZE, 221, GroupLayout.PREFERRED_SIZE)
+									.addGap(6))
+								.addComponent(cbPropertiesCFG, 0, 276, Short.MAX_VALUE))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(cbPropertiesProp, GroupLayout.PREFERRED_SIZE, 220, GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblPropertySelection, GroupLayout.PREFERRED_SIZE, 221, GroupLayout.PREFERRED_SIZE))
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(textField, GroupLayout.PREFERRED_SIZE, 207, GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblSetentialForm))
+									.addGap(12))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(btnVerify, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+									.addGap(12)))))
+					.addGap(0))
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(propertiesFramePanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addGap(24))
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblGrammarSelection)
+							.addComponent(lblSetentialForm)
+							.addComponent(lblPropertySelection)))
+					.addGap(18)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(cbPropertiesCFG, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(textField, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+						.addComponent(cbPropertiesProp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnVerify)
+						.addComponent(btnCancel))
+					.addContainerGap())
+		);
+		contentPane.setLayout(gl_contentPane);
 		
 	}
 }

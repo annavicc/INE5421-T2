@@ -80,8 +80,7 @@ public class AddCFGFrame extends JFrame {
 		scrollPane.setViewportView(txtaAddRL);
 		txtaAddRL.setToolTipText("");
 		
-		txtaAddRL.setToolTipText("<html>RE format.: a*(b?c|d)*<br>"
-				+ "RG format: S->aS|b</html>");
+		txtaAddRL.setToolTipText("<html>CFG format: S -> a S b | b | & </html>");
 
 		
 		// JButons:
@@ -141,9 +140,9 @@ public class AddCFGFrame extends JFrame {
 //				op.printFirstSet("T");
 //				op.printFirstSet("T1");
 //				op.printFirstSet("F");
-				op.printFirstSet("S");
-				op.printFirstSet("A");
-				op.printFirstSet("B");
+//				op.printFirstSet("S");
+//				op.printFirstSet("A");
+//				op.printFirstSet("B");
 //				op.printFirstSet("C");
 				
 //				op.printFirstSet("D");

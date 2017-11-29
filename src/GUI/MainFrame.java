@@ -87,7 +87,7 @@ public class MainFrame extends JFrame {
 		
 		// JButtons:
 		
-		JButton btnMainAddCFG = new JButton("Add a CFL");
+		JButton btnMainAddCFG = new JButton("Add a CFG");
 		btnMainAddCFG.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new AddCFGFrame(MainFrame.this);
@@ -133,12 +133,12 @@ public class MainFrame extends JFrame {
 //		});
 		
 		JButton btnMainVerifications = new JButton("CFG Properties");
-//		btnMainVerifications.addActionListener(new ActionListener() {
-//		    public void actionPerformed(ActionEvent e) {
-//		    	new PropertiesFrame(MainFrame.this);
-//		    }
-//		});
-//		
+		btnMainVerifications.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	new PropertiesFrame(MainFrame.this);
+		    }
+		});
+		
 		// Scrollable JList:
 		
 		jListMainCFL = new JList<String>();

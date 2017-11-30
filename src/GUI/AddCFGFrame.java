@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
+import ContextFreeLanguage.CFGOperator;
 import ContextFreeLanguage.ContextFreeGrammar;
 
 
@@ -118,7 +119,38 @@ public class AddCFGFrame extends JFrame {
 					JOptionPane.showMessageDialog(AddCFGFrame.this, "Invalid input!");
 					return;
 				}
-				// add Regular Language to Main Panel
+//				E -> T E1
+//				E1 -> + T E1 | &
+//				T -> F T1
+//				T1 -> * F T1 | &
+//				F -> id | ( E )
+				
+//				A -> b A | B c
+//				B -> d | C
+//				C -> D E
+//				D -> a | &
+//				E -> b
+				
+				
+				CFGOperator op = new CFGOperator(l);
+//				System.out.println(op.isFactored());
+//				System.out.println(op.hasLeftRecursion());
+//				op.printFollowSet();
+//				op.printFirstSet("E");
+//				op.printFirstSet("E1");
+//				op.printFirstSet("T");
+//				op.printFirstSet("T1");
+//				op.printFirstSet("F");
+				op.printFirstSet("S");
+				op.printFirstSet("A");
+				op.printFirstSet("B");
+//				op.printFirstSet("C");
+				
+//				op.printFirstSet("D");
+//				op.printFirstSet("E");
+//				op.printFirstSet("H");
+//				op.printFirstSet("M");
+				// add CFGto Main Panel
 				l.setId(name);
 				
 				AddCFGFrame.this.mainFrame.addToPanel(l);

@@ -1,20 +1,33 @@
 package GUI;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
 
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
+import ContextFreeLanguage.CFGOperator;
 import ContextFreeLanguage.ContextFreeGrammar;
 
 public class PropertiesFrame extends JFrame {
 
+	// Auto-generated UID:
+	private static final long serialVersionUID = -9024968109058945031L;
+	
 	private MainFrame mainFrame;
 	private JComboBox<ContextFreeGrammar> cbPropertiesCFG;
 	private JPanel contentPane;
+	private JTextField textField;
 
 	
 	/**
@@ -52,38 +65,151 @@ public class PropertiesFrame extends JFrame {
 
 		this.getContentPane().setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
 		
 		JPanel propertiesFramePanel = new JPanel();
-		propertiesFramePanel.setBounds(0, 0, 10, 10);
-		contentPane.add(propertiesFramePanel);
 		
-		JLabel lblGrammarSelection = new JLabel("Select the Grammar Below:");
-		lblGrammarSelection.setBounds(41, 34, 221, 15);
-		contentPane.add(lblGrammarSelection);
+		JLabel lblGrammarSelection = new JLabel("Select the Grammar:");
+		JLabel lblSetentialForm = new JLabel("Enter Setential Form:");
+		JLabel lblPropertySelection = new JLabel("Select the Verification:");
 		
-		cbPropertiesCFG = new JComboBox();
-		cbPropertiesCFG.setBounds(570, 61, 32, 24);
-		contentPane.add(cbPropertiesCFG);
 		
-		JComboBox cbPropertiesGrammar = new JComboBox();
-		cbPropertiesGrammar.addItem("Has Left Recursion?");
-		cbPropertiesGrammar.addItem("Is Factored?");
+		cbPropertiesCFG = new JComboBox<ContextFreeGrammar>();
+		HashMap<String, ContextFreeGrammar> languages = mainFrame.getLanguages();
+		for (String id : languages.keySet()) {
+			cbPropertiesCFG.addItem(languages.get(id));
+		}
 		
-		cbPropertiesGrammar.setBounds(105, 61, 32, 24);
-		contentPane.add(cbPropertiesGrammar);
-		
-		JLabel lblPropertySelection = new JLabel("Select the Verification Below:");
-		lblPropertySelection.setBounds(479, 34, 221, 15);
-		contentPane.add(lblPropertySelection);
+		JComboBox<String> cbPropertiesProp = new JComboBox<String>();
+		cbPropertiesProp.addItem("First of:");
+		cbPropertiesProp.addItem("First Non-Terminal of:");
+		cbPropertiesProp.addItem("Follow of:");
+		cbPropertiesProp.addItem("Has Left Recursion?");
+		cbPropertiesProp.addItem("Is Factored?");
+		cbPropertiesProp.addActionListener (new ActionListener () {
+		    public void actionPerformed(ActionEvent e) {
+		    	String selected = String.valueOf(cbPropertiesProp.getSelectedItem());
+		    	if (selected.equals("Has Left Recursion?") || selected.equals("Is Factored?")) {
+		    		textField.setEnabled(false);
+		    		lblSetentialForm.setEnabled(false);
+		    	} else {
+		    		textField.setEnabled(true);
+		    		lblSetentialForm.setEnabled(true);
+		    	}
+		    }
+		});
 		
 		JButton btnVerify = new JButton("Verify");
-		btnVerify.setBounds(621, 153, 117, 25);
-		contentPane.add(btnVerify);
+		btnVerify.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ContextFreeGrammar cfg = (ContextFreeGrammar) cbPropertiesCFG.getSelectedItem();
+				CFGOperator op = new CFGOperator(cfg);
+				String property = String.valueOf(cbPropertiesProp.getSelectedItem());
+				if (cfg == null) { 
+					return;
+				}
+				String response = "";
+				if (property.equals("Has Left Recursion?")) {
+					if (op.hasLeftRecursion()) {
+						response += cfg.getId() + " does have left recursion.\n"; 
+					} else {
+						response += cfg.getId() + " does not have left recursion.\n";
+					}
+				}
+				else if (property.equals("Is Factored?")) {
+					if (op.isFactored()) {
+						response += cfg.getId() + " is factored.\n"; 
+					} else {
+						response += cfg.getId() + " is not factored.\n";
+					}
+				}
+				else if (property.equals("First of:")) {
+					String input = textField.getText();
+					response += "First(" + input + ") in " + cfg.getId() + " is:\n";
+					for (String first : op.getFirst(input)) {
+						response += first + "\n";
+					}
+				}
+				else if (property.equals("First Non-Terminal of:")) {
+					String input = textField.getText();
+					response += "FirstNT(" + input + ") in " + cfg.getId() + " is:\n";
+					for (String first : op.getFirstNT(input)) {
+						response += first + "\n";
+					}
+				}
+				else if (property.equals("Follow of:")) {
+					String input = textField.getText();
+					response += "Follow(" + input + ") in " + cfg.getId() + " is:\n";
+					for (String follow : op.getFollow(input)) {
+						response += follow+ "\n";
+					}
+				}
+				JOptionPane.showMessageDialog(PropertiesFrame.this, response);
+			}
+		});	
 		
 		JButton btnCancel = new JButton("Cancel");
-		btnCancel.setBounds(479, 153, 117, 25);
-		contentPane.add(btnCancel);
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PropertiesFrame.this.exit();
+			}
+		});
+		
+		textField = new JTextField();
+		textField.setColumns(10);
+		
+		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(propertiesFramePanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addContainerGap()
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(lblGrammarSelection, GroupLayout.PREFERRED_SIZE, 221, GroupLayout.PREFERRED_SIZE)
+									.addGap(6))
+								.addComponent(cbPropertiesCFG, 0, 274, Short.MAX_VALUE))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(cbPropertiesProp, GroupLayout.PREFERRED_SIZE, 220, GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblPropertySelection, GroupLayout.PREFERRED_SIZE, 221, GroupLayout.PREFERRED_SIZE))
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(textField, GroupLayout.PREFERRED_SIZE, 207, GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblSetentialForm)))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(btnVerify, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)))
+							.addGap(12)))
+					.addGap(0))
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(propertiesFramePanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addGap(24))
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblGrammarSelection)
+							.addComponent(lblSetentialForm)
+							.addComponent(lblPropertySelection)))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(cbPropertiesCFG, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
+						.addComponent(textField, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
+						.addComponent(cbPropertiesProp, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnVerify)
+						.addComponent(btnCancel))
+					.addContainerGap())
+		);
+		contentPane.setLayout(gl_contentPane);
 		
 	}
 }

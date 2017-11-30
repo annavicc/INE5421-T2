@@ -145,11 +145,16 @@ private ContextFreeGrammar grammar[];
 				"B -> C a B | &\n" + 
 				"C -> c C | & | B\n");
 		CFGOperator op = new CFGOperator(g);
-		assertEquals("S -> C a B  b | b |  C d \n" + 
-				"B ->  C a B  |  & \n" + 
-				"C ->  c C C1 | C1 \n" + 
+		assertTrue(op.hasLeftRecursion());
+		String def = g.getDefinition();
+		
+		assertEquals("S ->  C a B  b  |     C d    |  b  \n" + 
+				"B ->     &    |     C a B     \n" + 
+				"C ->     c C    C1 | C1 \n" + 
 				"C1 -> & | a B C1 \n" + 
-				"", op.eliminateLeftRecursion().get(2).getDefinition());
+				"", op.eliminateLeftRecursion().getDefinition());
+		
+		assertEquals(def, g.getDefinition());
 	}
 
 }

@@ -80,8 +80,7 @@ public class AddCFGFrame extends JFrame {
 		scrollPane.setViewportView(txtaAddRL);
 		txtaAddRL.setToolTipText("");
 		
-		txtaAddRL.setToolTipText("<html>RE format.: a*(b?c|d)*<br>"
-				+ "RG format: S->aS|b</html>");
+		txtaAddRL.setToolTipText("<html>CFG format: S -> a S b | b | & </html>");
 
 		
 		// JButons:
@@ -119,37 +118,7 @@ public class AddCFGFrame extends JFrame {
 					JOptionPane.showMessageDialog(AddCFGFrame.this, "Invalid input!");
 					return;
 				}
-//				E -> T E1
-//				E1 -> + T E1 | &
-//				T -> F T1
-//				T1 -> * F T1 | &
-//				F -> id | ( E )
-				
-//				A -> b A | B c
-//				B -> d | C
-//				C -> D E
-//				D -> a | &
-//				E -> b
-				
-				
-				CFGOperator op = new CFGOperator(l);
-//				System.out.println(op.isFactored());
-//				System.out.println(op.hasLeftRecursion());
-//				op.printFollowSet();
-//				op.printFirstSet("E");
-//				op.printFirstSet("E1");
-//				op.printFirstSet("T");
-//				op.printFirstSet("T1");
-//				op.printFirstSet("F");
-				op.printFirstSet("S");
-				op.printFirstSet("A");
-				op.printFirstSet("B");
-//				op.printFirstSet("C");
-				
-//				op.printFirstSet("D");
-//				op.printFirstSet("E");
-//				op.printFirstSet("H");
-//				op.printFirstSet("M");
+
 				// add CFGto Main Panel
 				l.setId(name);
 				

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.Set;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -125,22 +126,37 @@ public class PropertiesFrame extends JFrame {
 				else if (property.equals("First of:")) {
 					String input = textField.getText();
 					response += "First(" + input + ") in " + cfg.getId() + " is:\n";
-					for (String first : op.getFirst(input)) {
-						response += first + "\n";
+					Set<String> set = op.getFirst(input);
+					if (set == null) {
+						response = "There are symbols that do not belong to Vn U Vt!";
+					} else {
+						for (String first : set) {
+							response += first + "\n";
+						}
 					}
 				}
 				else if (property.equals("First Non-Terminal of:")) {
 					String input = textField.getText();
 					response += "FirstNT(" + input + ") in " + cfg.getId() + " is:\n";
-					for (String first : op.getFirstNT(input)) {
-						response += first + "\n";
+					Set<String> set = op.getFirstNT(input);
+					if (set == null) {
+						response = "There are symbols that do not belong to Vn U Vt!";
+					} else {
+						for (String first : set) {
+							response += first + "\n";
+						}
 					}
 				}
 				else if (property.equals("Follow of:")) {
 					String input = textField.getText();
 					response += "Follow(" + input + ") in " + cfg.getId() + " is:\n";
-					for (String follow : op.getFollow(input)) {
-						response += follow+ "\n";
+					Set<String> set = op.getFollow(input);
+					if (set == null) {
+						response = "There are symbols that do not belong to Vn U Vt!";
+					} else {
+						for (String follow : set) {
+							response += follow+ "\n";
+						}
 					}
 				}
 				JOptionPane.showMessageDialog(PropertiesFrame.this, response);

@@ -68,6 +68,9 @@ public class CFGOperator {
 	 * @return the first set
 	 */
 	public Set<String> getFirst(String alfa) {
+		if (!isVnVt(alfa)) { // if a symbol does not belong to vn vt
+			return null;
+		}
 		if(!first.containsKey(alfa)) {
 			Set<String> f= new HashSet<>();
 			f.add(alfa);
@@ -172,7 +175,10 @@ public class CFGOperator {
 	 * @param nt the non terminal to get the firstNT set from
 	 * @return the firstNT set
 	 */
-	public Set<String> getFirstNT(String nt){
+	public Set<String> getFirstNT(String nt) {
+		if (!isVnVt(nt)) { // if a symbol does not belong to vn vt
+			return null;
+		}
 		return getFirstNT().get(nt);
 	}
 	
@@ -261,6 +267,9 @@ public class CFGOperator {
 	 * @return the follow set of vn
 	 */
 	public Set<String> getFollow(String vn){
+		if (!isVnVt(vn)) { // if a symbol does not belong to vn vt
+			return null;
+		}
 		return getFollow().get(vn);
 	}
 	
@@ -679,7 +688,6 @@ public class CFGOperator {
 	 * @return all the resulting grammars from every step of the recursion elimination process
 	 */
 	public ContextFreeGrammar eliminateLeftRecursion() {
-		// TODO transform G in proper
 		ArrayList<ContextFreeGrammar> results = new ArrayList<>();
 		ContextFreeGrammar newG = grammar;
 		ArrayList<HashMap<String, HashSet<String>>> newProd;
@@ -890,4 +898,27 @@ public class CFGOperator {
 		return hasEps;
 	}
 	
+	/**
+	 * Verify if a given sequence of symbols
+	 * belongs to vN U vt
+	 * @param str the string to be verified
+	 * @return true if all symbols belong to vn U vt
+	 */
+	private boolean isVnVt(String str) {
+		boolean onlySpaces = true;
+		for (String s : breakSententialForm(str)) {
+			if (s.matches("[\\s]+")) {
+				continue;
+			} else {
+				onlySpaces = false;
+				if (!vn.contains(s) && !vt.contains(s)) {
+					return false;
+				}
+			}
+		}
+		if (onlySpaces) {
+			return false;
+		}
+		return true;
+	}
 }

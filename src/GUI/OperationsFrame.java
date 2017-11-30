@@ -210,9 +210,7 @@ public class OperationsFrame extends JFrame {
 				warning = cfg.getId() + " does not have left recursion.\n"
 						+ "Nothing will be done."; 
 			} else {
-				for (ContextFreeGrammar newCFG : op.eliminateLeftRecursion()) {
-					mainFrame.addToPanel(newCFG);
-				}
+				mainFrame.addToPanel(op.eliminateLeftRecursion());
 			}
 			
 		} else {

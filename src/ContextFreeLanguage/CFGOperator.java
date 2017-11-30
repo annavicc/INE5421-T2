@@ -678,27 +678,30 @@ public class CFGOperator {
 	 * Eliminate left recursion of the grammar
 	 * @return all the resulting grammars from every step of the recursion elimination process
 	 */
-	public ArrayList<ContextFreeGrammar> eliminateLeftRecursion() {
+	public ContextFreeGrammar eliminateLeftRecursion() {
 		// TODO transform G in proper
 		ArrayList<ContextFreeGrammar> results = new ArrayList<>();
-		ContextFreeGrammar newG = grammar; // new grammar
+		ContextFreeGrammar newG = grammar;
 		ArrayList<HashMap<String, HashSet<String>>> newProd;
 		ArrayList<String> numberedVn = new ArrayList<>();
-		for (String nt : newG.getVn()) { // ordered vn
+		for (String nt : grammar.getVn()) { // ordered vn
 			numberedVn.add(nt);
 		}
 		
 		if (!hasLeftRecursion()) {
-			return results;
+			return grammar;
 		}
 		
 		for (int i = 0; i < numberedVn.size(); i++) { // for every Ai
+			newG = ContextFreeGrammar.isValidCFG(newG.getDefinition()); // new grammar
+			CFGOperator newOp = new CFGOperator(newG);
+			
 			// Indirect Left Recursion
 			for (int j = 0; j <= i-1; j++) { // For every Aj
-				ArrayList<String> productions = getProdList(newG.getGrammarProductions(numberedVn.get(i)));
+				ArrayList<String> productions = newOp.getProdList(newG.getGrammarProductions(numberedVn.get(i)));
 				for (String aiProd : productions) { // Ai -> ... 
-					String firstSymbolAi = breakSententialForm(aiProd).get(0); // first symbol of prod in Ai
-					if(vt.contains(firstSymbolAi)) { // terminal
+					String firstSymbolAi = newOp.breakSententialForm(aiProd).get(0); // first symbol of prod in Ai
+					if(newOp.vt.contains(firstSymbolAi)) { // terminal
 						continue;
 					}
 					if  (firstSymbolAi.equals(numberedVn.get(j))) { // Ai -> Ajalfa
@@ -708,7 +711,7 @@ public class CFGOperator {
 							for (String key: map.keySet()) {
 								newG.addVn(key);
 								for (String pp : map.get(key)){ 
-									if (isEpsilonProductions(pp)) { // if an epsilon was added, add & to the grammar vt set
+									if (newOp.isEpsilonProductions(pp)) { // if an epsilon was added, add & to the grammar vt set
 										newG.addVt("&");
 									}
 									Set<String> s = newG.getGrammarProductions(key);
@@ -723,8 +726,8 @@ public class CFGOperator {
 				}
 			}
 			// Eliminate direct recursion of Ai productions
-			if (hasDirectRecursion(numberedVn.get(i))) {
-				newProd = replaceDirectRecursionProduction(numberedVn.get(i));
+			if (newOp.hasDirectRecursion(numberedVn.get(i))) {
+				newProd = newOp.replaceDirectRecursionProduction(numberedVn.get(i));
 				newG.removeProductions(numberedVn.get(i)); // remove productions with recursion
 				for (HashMap<String, HashSet<String>>  map : newProd) {
 					for (String key: map.keySet()) {
@@ -742,10 +745,11 @@ public class CFGOperator {
 					}
 				}
 			}
-			
 			results.add(newG);
 		}
-		return results;
+		ContextFreeGrammar result = results.get(results.size()-1);
+		result.setId(grammar.getId() + " [-LR]");
+		return results.get(results.size()-1);
 	}
 	
 	/**

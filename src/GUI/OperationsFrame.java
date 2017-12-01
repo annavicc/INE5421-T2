@@ -45,7 +45,7 @@ public class OperationsFrame extends JFrame {
 			this.mainFrame = mainFrame;
 			initialize();
 			this.setVisible(true);
-			mainFrame.setVisible(false);
+//			mainFrame.setVisible(false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -45,8 +45,8 @@ public class AddCFGFrame extends JFrame {
 		try {
 			this.mainFrame = mainFrame;
 			initialize();
+			mainFrame.setVisible(true);
 			this.setVisible(true);
-//			mainFrame.setVisible(false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

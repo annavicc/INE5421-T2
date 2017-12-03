@@ -548,6 +548,9 @@ public class CFGOperator {
 							HashMap<String, HashSet<String>> ind2 = indirectFactor(nonTerminal, nfProd2.get(0));
 							newProductions.add(ind1);
 							newProductions.add(ind2);
+//S -> b c D | B c d
+//B -> b B | b
+//D -> d D | d
 							newG.removeProduction(nonTerminal, prods.get(i));
 							newG.removeProduction(nonTerminal, prods.get(j));
 						}
@@ -581,6 +584,7 @@ public class CFGOperator {
 	 */
 	private HashMap<String, HashSet<String>> indirectFactor(String vn, String nf) {
 			HashMap<String, HashSet<String>> prod = new HashMap<String, HashSet<String>>();
+			System.out.println(nf);
 			Set<String> newS = grammar.getGrammarProductions(vn);
 			for (String vnP : newS) {
 				ArrayList<String> symb = breakSententialForm(vnP);

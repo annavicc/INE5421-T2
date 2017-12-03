@@ -48,8 +48,8 @@ public class ViewEditFrame extends JFrame{
 			this.mainFrame = f;
 			this.grammar = g;
 			initialize();
+			mainFrame.setVisible(true);
 			this.setVisible(true);
-//			mainFrame.setVisible(false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

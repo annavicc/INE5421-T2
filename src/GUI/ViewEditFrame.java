@@ -49,7 +49,7 @@ public class ViewEditFrame extends JFrame{
 			this.grammar = g;
 			initialize();
 			this.setVisible(true);
-			mainFrame.setVisible(false);
+//			mainFrame.setVisible(false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

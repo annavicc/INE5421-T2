@@ -37,11 +37,30 @@ public class ContextFreeGrammar {
 	 * @param g the grammar to have data copied from
 	 */
 	public ContextFreeGrammar(ContextFreeGrammar g) {
-		this.vn = g.vn;
-		this.vt = g.vt;
-		this.productions = g.productions;
-		this.s = g.s;
-		this.grammar = g.grammar;
+		String init = g.getInitialSymbol();
+		Set<String> newVn = new HashSet<String>();
+		Set<String> newVt = new HashSet<String>();
+		productions = new HashMap<String, HashSet<String>>();
+		
+		String gr = g.grammar;
+		for (String s : g.getVn()) {
+			newVn.add(s);
+		}
+		for (String s : g.getVt()) {
+			newVt.add(s);
+		}
+		
+		this.s = init;
+		this.vn = (HashSet<String>) newVn;
+		this.vt = (HashSet<String>)newVt;
+		this.grammar = gr;
+		for (String pr : this.vn) {
+			productions.put(pr, new HashSet<>());
+			for (String prod : g.getGrammarProductions(pr)) {
+				this.addProduction(pr, prod);
+				
+			}
+		}
 	}
 	
 	/**
@@ -60,6 +79,8 @@ public class ContextFreeGrammar {
 	public void setProductions(HashMap<String, HashSet<String>> p) {
 		this.productions = p;
 	}
+	
+	
 	
 	/**
 	 * Remove all productions of a non terminal
@@ -200,6 +221,7 @@ public class ContextFreeGrammar {
 			if (aux.length() > 0) { 
 				aux = aux.substring(0, aux.length()-2);
 			}
+			aux = aux.trim().replaceAll(" +", " ");
 			if (vN.equals(this.s)) {
 				grammar = vN + " -> " + aux + "\n" + grammar;
 			} else {

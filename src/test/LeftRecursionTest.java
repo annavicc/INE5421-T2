@@ -122,17 +122,6 @@ private ContextFreeGrammar grammar[];
 		assertFalse(op.hasLeftRecursion());
 		op = new CFGOperator(grammar[12]);
 		assertFalse(op.hasLeftRecursion());
-		
-//		op = new CFGOperator(ContextFreeGrammar.isValidCFG(
-//				"P -> K L | b K L e\n" + 
-//				"K -> c K | T V\n" +
-//				"T -> t T | &\n" +
-//				"V -> v V | &\n" +
-//				"L -> C L1\n" +
-//				"L1 -> C L1 | &\n" +
-//				"C -> com | &"));
-//		// Transform G in proper
-//		System.out.println(op.eliminateLeftRecursion().get(6).getDefinition());
 	}
 	
 	/**
@@ -148,10 +137,10 @@ private ContextFreeGrammar grammar[];
 		assertTrue(op.hasLeftRecursion());
 		String def = g.getDefinition();
 		
-		assertEquals("S ->  C a B  b  |     C d    |  b  \n" + 
-				"B ->     &    |     C a B     \n" + 
-				"C ->     c C    C1 | C1 \n" + 
-				"C1 -> & | a B C1 \n" + 
+		assertEquals("S -> C a B b | C d | b\n" + 
+				"B -> C a B | &\n" + 
+				"C -> c C C1 | C1\n" + 
+				"C1 -> & | a B C1\n" + 
 				"", op.eliminateLeftRecursion().getDefinition());
 		
 		assertEquals(def, g.getDefinition());

@@ -488,7 +488,6 @@ public class CFGOperator {
 			g.setId(grammar.getId() + " [F" + i + "]");
 			newOp = new CFGOperator(g);
 			attempts.add(g);
-			System.out.println(g.getDefinition());
 			if (newOp.isFactored()) {
 				break;
 			}
@@ -515,13 +514,28 @@ public class CFGOperator {
 		return l;
 	}
 	
+	/**
+	 * Helper method to create a next vn S1, S2... when factoring
+	 * @param s the current vn
+	 * @return vn + 1
+	 */
+	private String createNextVN(String s) {
+		if (s.length() == 1) {
+			return s + "" + 1;
+		}
+		String newVn = s.substring(1, s.length());
+		
+		int number = Integer.parseInt(newVn) + 1;
+		return s.charAt(0) + "" + number;
+	}
+	
 	//TODO: Factoring not working for some grammars (infinite loop)
 	/*
 	 	Eg.:
 	  	S -> B b | C d 
 		B -> C a B | & 
 		C -> c C | & | B
-	 */
+	*/
 	
 	/**
 	 * Factor a given grammar in 1 step.
@@ -596,7 +610,7 @@ public class CFGOperator {
 			HashMap<String, String> created = new HashMap<>();
 			prod = newG.getGrammarProductions(nonTerminal);
 			ArrayList<String> prods = getProdList(prod);
-			String newNT = nonTerminal + ""  + 1;
+			String newNT = createNextVN(nonTerminal);
 			for(int i = 0; i < prods.size(); i++) {
 				nfProd1 = breakSententialForm(prods.get(i));
 				for(int j = i+1; j < prods.size(); j++) {
@@ -606,7 +620,7 @@ public class CFGOperator {
 							newNT = created.get(nfProd1.get(0));
 						} else {
 							created.put(nfProd1.get(0), newNT); // last prod created S -> eS1
-							newNT = newNT + "" + 1;
+							newNT = createNextVN(newNT);
 						}
 						newG.removeProduction(nonTerminal, prods.get(i));
 						newG.removeProduction(nonTerminal, prods.get(j));

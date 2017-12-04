@@ -76,7 +76,7 @@ class FactoringTest {
 		
 		grammar[10] = ContextFreeGrammar.isValidCFG(
 				"X -> Y Z\n" + 
-						"Y -> m | n | &\n" + 
+				"Y -> m | n | &\n" + 
 				"Z -> m");
 		grammar[11] = ContextFreeGrammar.isValidCFG(""
 				+ "S -> A B | C D\n" + 
@@ -139,12 +139,12 @@ class FactoringTest {
 		CFGOperator op = new CFGOperator(g);
 		ArrayList<ContextFreeGrammar> results = new ArrayList<>();
 		results = op.factorGrammar(3);
-		assertEquals("S -> c S11 | e S1 | b y z C\n" + 
+		assertEquals("S -> c S2 | e S1 | b y z C\n" + 
 				"B -> c d | b\n" + 
-				"S11 -> d y z C | y z B C\n" + 
 				"C -> c | e C1\n" + 
 				"S1 -> f y z B C | g y z B C\n" + 
 				"C1 -> f | g\n" + 
+				"S2 -> d y z C | y z B C\n" + 
 				"" , results.get(results.size()-1).getDefinition());
 	}
 	
@@ -167,13 +167,13 @@ class FactoringTest {
 		assertTrue(op.isFactored()); // must be factored
 
 		assertEquals("S -> b S1\n" + 
+				"S3 -> D | &\n" + 
 				"B -> b B1\n" + 
-				"S11 -> d S111\n" + 
 				"D -> d D1\n" + 
-				"S111 -> D | &\n" + 
 				"D1 -> D | &\n" + 
-				"S1 -> c S11 | B c d\n" + 
+				"S1 -> c S2 | B c d\n" + 
 				"B1 -> B | &\n" + 
+				"S2 -> d S3\n" + 
 				"", results.get(results.size()-1).getDefinition());
 	}
 
@@ -193,9 +193,9 @@ class FactoringTest {
 		
 		assertEquals("S -> b | a B b | d | c S1\n" + 
 				"B -> C a B | &\n" + 
-				"S11 -> a B b | d\n" + 
 				"C -> & | c C\n" + 
-				"S1 -> C S11\n" + 
+				"S1 -> C S2\n" + 
+				"S2 -> a B b | d\n" + 
 				"", results.get(results.size()-1).getDefinition());
 	}
 	

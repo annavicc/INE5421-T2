@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 /**
  * This class is responsible for
@@ -487,6 +488,7 @@ public class CFGOperator {
 			g.setId(grammar.getId() + " [F" + i + "]");
 			newOp = new CFGOperator(g);
 			attempts.add(g);
+			System.out.println(g.getDefinition());
 			if (newOp.isFactored()) {
 				break;
 			}
@@ -513,6 +515,14 @@ public class CFGOperator {
 		return l;
 	}
 	
+	//TODO: Factoring not working for some grammars (infinite loop)
+	/*
+	 	Eg.:
+	  	S -> B b | C d 
+		B -> C a B | & 
+		C -> c C | & | B
+	 */
+	
 	/**
 	 * Factor a given grammar in 1 step.
 	 * If not factored in 1 step, call this function again
@@ -527,28 +537,29 @@ public class CFGOperator {
 		// New productions
 		ArrayList<HashMap<String, HashSet<String>>> newProductions = new ArrayList<HashMap<String, HashSet<String>> >();
 
+		// Indirect
 		for(String nonTerminal : newG.getVn()) {
 			prod = newG.getGrammarProductions(nonTerminal);
 			ArrayList<String> prods = getProdList(prod);
-			// Indirect
 			for(int i = 0; i < prods.size(); i++) {
 				nfProd1 = breakSententialForm(prods.get(i));
 				String symbP1 = nfProd1.get(0);
-				if (symbP1.equals("&")) {
-//					continue;
-				}
 				for(int j = i+1; j < prods.size(); j++) {
 					nfProd2 = breakSententialForm(prods.get(j));
 					String symbP2 = nfProd2.get(0);
-					if (symbP2.equals("&")) {
-//						continue;
-					}
 					if (vn.contains(symbP1) || vn.contains(symbP2)) {
+						if (symbP1.equals(symbP2)) {
+							continue;
+						}
+						if (symbP1.equals(nonTerminal)) {
+							continue;
+						}
 						Set<String> firstTmp1 = getProductionFirstSet(nfProd1);
 						Set<String> firstTmp2 = getProductionFirstSet(nfProd2);
 						Set<String> firstVn1 = getProductionFirstNT(nonTerminal, nfProd1);
 						Set<String> firstVn2 = getProductionFirstNT(nonTerminal, nfProd2);
 						if (!intersectionisEmpty(firstTmp1, firstTmp2) || !intersectionisEmpty(firstVn1, firstVn2)) {
+							
 							if (vn.contains(symbP1)) {
 								HashMap<String, HashSet<String>> ind1 = indirectFactor(newG, nonTerminal, nfProd1);
 								newG.removeProduction(nonTerminal, prods.get(i));
@@ -578,18 +589,28 @@ public class CFGOperator {
 				}
 			}
 		}
+		
 		newProductions.clear();
+		
 		for(String nonTerminal : newG.getVn()) {
+			HashMap<String, String> created = new HashMap<>();
 			prod = newG.getGrammarProductions(nonTerminal);
 			ArrayList<String> prods = getProdList(prod);
+			String newNT = nonTerminal + ""  + 1;
 			for(int i = 0; i < prods.size(); i++) {
 				nfProd1 = breakSententialForm(prods.get(i));
 				for(int j = i+1; j < prods.size(); j++) {
 					nfProd2 = breakSententialForm(prods.get(j));
 					if(nfProd1.get(0).equals(nfProd2.get(0))) { // Direct
+						if(created.containsKey(nfProd1.get(0))) {
+							newNT = created.get(nfProd1.get(0));
+						} else {
+							created.put(nfProd1.get(0), newNT); // last prod created S -> eS1
+							newNT = newNT + "" + 1;
+						}
 						newG.removeProduction(nonTerminal, prods.get(i));
 						newG.removeProduction(nonTerminal, prods.get(j));
-						newProductions.add(directFactor(nonTerminal, nfProd1, nfProd2));
+						newProductions.add(directFactor(created.get(nfProd1.get(0)), nonTerminal, nfProd1, nfProd2));
 					}
 				}
 			}
@@ -607,12 +628,6 @@ public class CFGOperator {
 				}
 			}
 		}
-		
-		
-		
-//S -> b c D | B c d
-//B -> b B | b
-//D -> d D | d
 		return newG;
 	}
 	
@@ -628,15 +643,13 @@ public class CFGOperator {
 			Set<String> nfPr = newG.getGrammarProductions(nfProd.get(0));
 			for (String vnP : nfPr) {
 				String newP = vnP + " ";
+				if (newP.trim().equals("&") && nfProd.size() > 1) {
+					newP = "";
+				}
 				for (int i = 1; i < nfProd.size(); i++) {
 					newP = newP + nfProd.get(i) + " ";
 				}
-				if (Character.isSpaceChar(newP.charAt(0))) {
-					newP = newP.substring(1, newP.length());
-				}
-				if (Character.isSpaceChar(newP.charAt(newP.length()-1))) {
-					newP = newP.substring(0, newP.length()-1);
-				}
+				
 				newP = newP.trim().replaceAll(" +", " ");
 				
 				set.add(newP);
@@ -668,14 +681,20 @@ public class CFGOperator {
 	 * @param prod2 the production that is not factored
 	 * @return the new set of productions after the factoring process
 	 */
-	private HashMap<String, HashSet<String>> directFactor(String vn, ArrayList<String> prod1, ArrayList<String> prod2) {
+	private HashMap<String, HashSet<String>> directFactor(String index, String vn, ArrayList<String> prod1, ArrayList<String> prod2) {
 		HashMap<String, HashSet<String>> prod = new HashMap<String, HashSet<String>>();
 		String common = "";
 		String p1 = "";
 		String p2 = "";
-		
+		HashSet<String> pset = new HashSet<>();
 		common = prod1.get(0);
-		
+		if (common.equals("&")) {
+			pset.add("&");
+			prod.put(vn, pset);
+			return prod;
+			
+		}
+
 		int i = 1;
 
 		for (int j = i; j < prod1.size(); j++) {
@@ -691,27 +710,26 @@ public class CFGOperator {
 			p1 = p1.substring(0, p1.length()-1);
 		}
 		
-		HashSet<String> pset = new HashSet<>();
-		String newP = common + " " + vn + "" + 1;
+		String newP = common + " " + index;
 		newP = newP.trim().replaceAll(" +", " ");
 		pset.add(newP);
 		prod.put(vn, pset);
-		prod.put(vn+""+1, new HashSet<>());
+		prod.put(index, new HashSet<>());
 		
 		if (p2.equals("") || p1.equals("")) {
-			pset = prod.get(vn + "" + 1);
+			pset = prod.get(index);
 			pset.add("&");
-			prod.put(vn + "" + 1, pset);
+			prod.put(index, pset);
 		}
 		if (!p1.equals("")) {
-			pset = prod.get(vn + "" + 1);
+			pset = prod.get(index);
 			pset.add(p1);
-			prod.put(vn + "" + 1, pset);
+			prod.put(index, pset);
 		}
 		if (!p2.equals("")) {
-			pset = prod.get(vn + "" + 1);
+			pset = prod.get(index);
 			pset.add(p2);
-			prod.put(vn + "" + 1, pset);
+			prod.put(index, pset);
 		}
 		return prod;
 	}

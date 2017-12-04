@@ -139,10 +139,11 @@ class FactoringTest {
 		CFGOperator op = new CFGOperator(g);
 		ArrayList<ContextFreeGrammar> results = new ArrayList<>();
 		results = op.factorGrammar(3);
-		assertEquals("S -> c S1 | e S1 | b y z C\n" + 
+		assertEquals("S -> c S11 | e S1 | b y z C\n" + 
 				"B -> c d | b\n" + 
+				"S11 -> d y z C | y z B C\n" + 
 				"C -> c | e C1\n" + 
-				"S1 -> f y z B C | d y z C | y z B C | g y z B C\n" + 
+				"S1 -> f y z B C | g y z B C\n" + 
 				"C1 -> f | g\n" + 
 				"" , results.get(results.size()-1).getDefinition());
 	}
@@ -152,9 +153,6 @@ class FactoringTest {
 	 * Test the factoring process of a non factored grammar
 	 */
 	@Test
-//S -> b c D | B c d
-//B -> b B | b 
-//D -> d D | d
 	void testFactorG1() {
 		ContextFreeGrammar g = ContextFreeGrammar.isValidCFG(
 				"S -> b c D | B c d\n" + 
@@ -164,7 +162,7 @@ class FactoringTest {
 		CFGOperator op = new CFGOperator(g);
 		ArrayList<ContextFreeGrammar> results = new ArrayList<>();
 		assertFalse(op.isFactored()); // not factored
-		results = op.factorGrammar(6);
+		results = op.factorGrammar(10);
 		op = new CFGOperator(results.get(results.size()-1));
 		assertTrue(op.isFactored()); // must be factored
 
@@ -176,6 +174,28 @@ class FactoringTest {
 				"D1 -> D | &\n" + 
 				"S1 -> c S11 | B c d\n" + 
 				"B1 -> B | &\n" + 
+				"", results.get(results.size()-1).getDefinition());
+	}
+
+	@Test 
+	void testFactorG2() {
+		ContextFreeGrammar g = ContextFreeGrammar.isValidCFG(
+				"S -> B b | C d \n" + 
+				"B -> C a B | & \n" + 
+				"C -> c C | &");
+		g.setId("G1");
+		CFGOperator op = new CFGOperator(g);
+		ArrayList<ContextFreeGrammar> results = new ArrayList<>();
+		assertFalse(op.isFactored()); // not factored
+		results = op.factorGrammar(6);
+		op = new CFGOperator(results.get(results.size()-1));
+		assertTrue(op.isFactored()); // must be factored
+		
+		assertEquals("S -> b | a B b | d | c S1\n" + 
+				"B -> C a B | &\n" + 
+				"S11 -> a B b | d\n" + 
+				"C -> & | c C\n" + 
+				"S1 -> C S11\n" + 
 				"", results.get(results.size()-1).getDefinition());
 	}
 	

@@ -57,7 +57,7 @@ public class OperationsFrame extends JFrame {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		this.setTitle("Regular Languages Operations");
+		this.setTitle("CFG Operations");
 		this.setResizable(false);
 		this.setBounds(100, 200, 650, 190);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

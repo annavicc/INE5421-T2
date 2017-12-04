@@ -80,8 +80,6 @@ public class ContextFreeGrammar {
 		this.productions = p;
 	}
 	
-	
-	
 	/**
 	 * Remove all productions of a non terminal
 	 * @param nt the non terminal

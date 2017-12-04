@@ -66,7 +66,7 @@ public class AddCFGFrame extends JFrame {
 		
 		// JLabels:
 		
-		JLabel lblAddCFGName = new JLabel("Enter a name for the Regular Language:");
+		JLabel lblAddCFGName = new JLabel("Enter a name for the Context Free Language:");
 		JLabel lblAddCFGAdd = new JLabel("Enter a Context Free Grammar below:");
 		
 		// RL name input:

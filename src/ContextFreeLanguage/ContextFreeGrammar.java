@@ -7,7 +7,7 @@ import java.util.Set;
 
 
 /**
- * Representation of a Context Free Language
+ * Representation of a Context Free Grammar
  */
 
 public class ContextFreeGrammar {
@@ -239,10 +239,6 @@ public class ContextFreeGrammar {
 	 */
 	public static ContextFreeGrammar isValidCFG(String inp) {
 		ContextFreeGrammar cfg = new ContextFreeGrammar(inp);
-		// Verify invalid symbols
-		if (!isLexicallyValid(inp)) {
-//			return null;
-		}
 		
 		// Get productions with no blanks for every vn
 		String[] productions = getProductions(inp);

@@ -199,6 +199,10 @@ public class OperationsFrame extends JFrame {
 			if (op.isFactored()) {
 				warning = cfg.getId() + " is factored.\n"
 						+ "Nothing will be done."; 
+			} else if (op.hasLeftRecursion()) {
+				warning = cfg.getId() + " has left recursion.\n"
+						+ "Please, eliminate the left recursion first "
+						+ "and then try factoring the grammar.";
 			} else {
 				for (ContextFreeGrammar newCFG : op.factorGrammar(maxSteps)) {
 					mainFrame.addToPanel(newCFG);
@@ -206,7 +210,6 @@ public class OperationsFrame extends JFrame {
 			}
 			
 		} else if (operation.equals("Eliminate Left Recursion")) {
-			//TODO FIX
 			if (!op.hasLeftRecursion()) {
 				warning = cfg.getId() + " does not have left recursion.\n"
 						+ "Nothing will be done."; 

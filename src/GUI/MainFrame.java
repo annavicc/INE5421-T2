@@ -209,6 +209,11 @@ public class MainFrame extends JFrame {
 		mainPanel.setLayout(gl_mainPanel);
 	}
 	
+	// Get selected item from the list
+	public String getSelectedFromList() {
+		return jListMainCFL.getSelectedValue();
+	}
+	
 	// Add Regular Language to JList
 	public void addToPanel(ContextFreeGrammar cfg) {
 		this.languages.put(cfg.getId(), cfg);

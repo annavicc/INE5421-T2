@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 /**
  * This class is responsible for
  * First, Follow and First-NT sets for a CFG
- * as well as factoring and eliminating
+ * as well as checking for non factoring
+ * grammar, left recursion property and
+ * doing the operation of
+ * factoring and eliminating
  * left-recursion for a CFG
- *
  */
 public class CFGOperator {
 	private ContextFreeGrammar grammar; // the grammar it operates on
@@ -23,7 +24,6 @@ public class CFGOperator {
 	
 	public CFGOperator(ContextFreeGrammar g) {
 		this.grammar = g;
-		
 		this.vn = grammar.getVn();
 		this.vt = grammar.getVt();
 		// Initializes sets
@@ -529,14 +529,6 @@ public class CFGOperator {
 		return s.charAt(0) + "" + number;
 	}
 	
-	//TODO: Factoring not working for some grammars (infinite loop)
-	/*
-	 	Eg.:
-	  	S -> B b | C d 
-		B -> C a B | & 
-		C -> c C | & | B
-	*/
-	
 	/**
 	 * Factor a given grammar in 1 step.
 	 * If not factored in 1 step, call this function again
@@ -553,6 +545,7 @@ public class CFGOperator {
 
 		boolean again = true;
 		
+		// Direct non factoring
 		for(String nonTerminal : newG.getVn()) {
 			HashMap<String, String> created = new HashMap<>();
 			prod = newG.getGrammarProductions(nonTerminal);
@@ -574,7 +567,6 @@ public class CFGOperator {
 						newG.removeProduction(nonTerminal, prods.get(j));
 						newProductions.add(directFactor(created.get(nfProd1.get(0)), nonTerminal, nfProd1, nfProd2));
 					}
-					break;
 				}
 				if (!again) {
 					break;
@@ -598,7 +590,8 @@ public class CFGOperator {
 		if (!again) {
 			return newG;
 		}
-		// Indirect
+		
+		// Indirect non factoring
 		for(String nonTerminal : newG.getVn()) {
 			prod = newG.getGrammarProductions(nonTerminal);
 			ArrayList<String> prods = getProdList(prod);
@@ -612,15 +605,12 @@ public class CFGOperator {
 						if (symbP1.equals(symbP2) ) {
 							continue;
 						}
-						if (symbP1.equals(nonTerminal)) {
-							continue;
-						}
+						
 						Set<String> firstTmp1 = getProductionFirstSet(nfProd1);
 						Set<String> firstTmp2 = getProductionFirstSet(nfProd2);
 						Set<String> firstVn1 = getProductionFirstNT(nonTerminal, nfProd1);
 						Set<String> firstVn2 = getProductionFirstNT(nonTerminal, nfProd2);
 						if (!intersectionisEmpty(firstTmp1, firstTmp2) || !intersectionisEmpty(firstVn1, firstVn2)) {
-							
 							if (vn.contains(symbP1)) {
 								HashMap<String, HashSet<String>> ind1 = indirectFactor(newG, nonTerminal, nfProd1);
 								newG.removeProduction(nonTerminal, prods.get(i));
@@ -663,7 +653,8 @@ public class CFGOperator {
 	 * @param nt the not factored symbol
 	 * @return the new set of productions after 1 step of factoring
 	 */
-	private HashMap<String, HashSet<String>> indirectFactor(ContextFreeGrammar newG, String vn, ArrayList<String> nfProd) {
+	private HashMap<String, HashSet<String>> indirectFactor(ContextFreeGrammar newG,
+			String vn, ArrayList<String> nfProd) {
 			HashMap<String, HashSet<String>> prod = new HashMap<String, HashSet<String>>();
 			HashSet<String> set = new HashSet<>();
 			Set<String> nfPr = newG.getGrammarProductions(nfProd.get(0));
@@ -707,7 +698,8 @@ public class CFGOperator {
 	 * @param prod2 the production that is not factored
 	 * @return the new set of productions after the factoring process
 	 */
-	private HashMap<String, HashSet<String>> directFactor(String index, String vn, ArrayList<String> prod1, ArrayList<String> prod2) {
+	private HashMap<String, HashSet<String>> directFactor(String index, String vn,
+			ArrayList<String> prod1, ArrayList<String> prod2) {
 		HashMap<String, HashSet<String>> prod = new HashMap<String, HashSet<String>>();
 		String common = "";
 		String p1 = "";
@@ -718,11 +710,8 @@ public class CFGOperator {
 			pset.add("&");
 			prod.put(vn, pset);
 			return prod;
-			
 		}
-
 		int i = 1;
-
 		for (int j = i; j < prod1.size(); j++) {
 			p1 += prod1.get(j) + " ";
 		}

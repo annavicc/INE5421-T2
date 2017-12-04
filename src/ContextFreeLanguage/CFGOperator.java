@@ -551,6 +551,53 @@ public class CFGOperator {
 		// New productions
 		ArrayList<HashMap<String, HashSet<String>>> newProductions = new ArrayList<HashMap<String, HashSet<String>> >();
 
+		boolean again = true;
+		
+		for(String nonTerminal : newG.getVn()) {
+			HashMap<String, String> created = new HashMap<>();
+			prod = newG.getGrammarProductions(nonTerminal);
+			ArrayList<String> prods = getProdList(prod);
+			String newNT = createNextVN(nonTerminal);
+			for(int i = 0; i < prods.size(); i++) {
+				nfProd1 = breakSententialForm(prods.get(i));
+				for(int j = i+1; j < prods.size(); j++) {
+					nfProd2 = breakSententialForm(prods.get(j));
+					if(nfProd1.get(0).equals(nfProd2.get(0))) { // Direct
+						again = false;
+						if(created.containsKey(nfProd1.get(0))) {
+							newNT = created.get(nfProd1.get(0));
+						} else {
+							created.put(nfProd1.get(0), newNT); // last prod created S -> eS1
+							newNT = createNextVN(newNT);
+						}
+						newG.removeProduction(nonTerminal, prods.get(i));
+						newG.removeProduction(nonTerminal, prods.get(j));
+						newProductions.add(directFactor(created.get(nfProd1.get(0)), nonTerminal, nfProd1, nfProd2));
+					}
+					break;
+				}
+				if (!again) {
+					break;
+				}
+			}
+		}
+		for (HashMap<String, HashSet<String>>  map : newProductions) {
+			for (String key: map.keySet()) {
+				newG.addVn(key);
+				for (String pp : map.get(key)){ 
+					if (isEpsilonProductions(pp)) { // if an epsilon was added, add & to the grammar vt set
+						newG.addVt("&");
+					}
+					Set<String> s = newG.getGrammarProductions(key);
+					s.add(pp);
+					newG.addProduction(key, s);
+				}
+			}
+		}
+		newProductions.clear();
+		if (!again) {
+			return newG;
+		}
 		// Indirect
 		for(String nonTerminal : newG.getVn()) {
 			prod = newG.getGrammarProductions(nonTerminal);
@@ -562,7 +609,7 @@ public class CFGOperator {
 					nfProd2 = breakSententialForm(prods.get(j));
 					String symbP2 = nfProd2.get(0);
 					if (vn.contains(symbP1) || vn.contains(symbP2)) {
-						if (symbP1.equals(symbP2)) {
+						if (symbP1.equals(symbP2) ) {
 							continue;
 						}
 						if (symbP1.equals(nonTerminal)) {
@@ -606,42 +653,7 @@ public class CFGOperator {
 		
 		newProductions.clear();
 		
-		for(String nonTerminal : newG.getVn()) {
-			HashMap<String, String> created = new HashMap<>();
-			prod = newG.getGrammarProductions(nonTerminal);
-			ArrayList<String> prods = getProdList(prod);
-			String newNT = createNextVN(nonTerminal);
-			for(int i = 0; i < prods.size(); i++) {
-				nfProd1 = breakSententialForm(prods.get(i));
-				for(int j = i+1; j < prods.size(); j++) {
-					nfProd2 = breakSententialForm(prods.get(j));
-					if(nfProd1.get(0).equals(nfProd2.get(0))) { // Direct
-						if(created.containsKey(nfProd1.get(0))) {
-							newNT = created.get(nfProd1.get(0));
-						} else {
-							created.put(nfProd1.get(0), newNT); // last prod created S -> eS1
-							newNT = createNextVN(newNT);
-						}
-						newG.removeProduction(nonTerminal, prods.get(i));
-						newG.removeProduction(nonTerminal, prods.get(j));
-						newProductions.add(directFactor(created.get(nfProd1.get(0)), nonTerminal, nfProd1, nfProd2));
-					}
-				}
-			}
-		}
-		for (HashMap<String, HashSet<String>>  map : newProductions) {
-			for (String key: map.keySet()) {
-				newG.addVn(key);
-				for (String pp : map.get(key)){ 
-					if (isEpsilonProductions(pp)) { // if an epsilon was added, add & to the grammar vt set
-						newG.addVt("&");
-					}
-					Set<String> s = newG.getGrammarProductions(key);
-					s.add(pp);
-					newG.addProduction(key, s);
-				}
-			}
-		}
+		
 		return newG;
 	}
 	

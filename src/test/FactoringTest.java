@@ -139,12 +139,11 @@ class FactoringTest {
 		CFGOperator op = new CFGOperator(g);
 		ArrayList<ContextFreeGrammar> results = new ArrayList<>();
 		results = op.factorGrammar(3);
-		assertEquals("S -> c S2 | e S1 | b y z C\n" + 
+		assertEquals("S -> e C1 y z B C | c S1 | b y z C\n" + 
 				"B -> c d | b\n" + 
 				"C -> c | e C1\n" + 
-				"S1 -> f y z B C | g y z B C\n" + 
 				"C1 -> f | g\n" + 
-				"S2 -> d y z C | y z B C\n" + 
+				"S1 -> d y z C | y z B C\n" + 
 				"" , results.get(results.size()-1).getDefinition());
 	}
 	
